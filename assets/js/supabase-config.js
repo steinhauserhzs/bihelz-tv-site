@@ -14,5 +14,5 @@
    ============================================================ */
 window.SUPA_CONFIG = {
   url: "https://jdazhiihbbobzupvzohf.supabase.co",
-  anonKey: "", // ← cole a anon/publishable key aqui p/ ligar os quadros compartilhados
+  anonKey: "sb_publishable_Ex94TWSYa47T6RoRYoDWQg_ZoNaoqkk", // publishable key (pública, protegida por RLS)
 };
