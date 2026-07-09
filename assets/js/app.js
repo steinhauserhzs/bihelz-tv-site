@@ -39,12 +39,13 @@ async function copyText(text, okMsg) {
 }
 
 /* ---------- Router (hash) ---------- */
-const ROUTES = ["home", "noticias", "party", "mercado", "mvp", "lab", "buscar", "guias", "comunidade"];
+const ROUTES = ["home", "noticias", "party", "mercado", "mvp", "lab", "buscar", "guias", "comunidade", "admin"];
 function route() {
   let h = (location.hash || "#home").slice(1);
   if (!ROUTES.includes(h)) h = "home";
   $$(".page").forEach((p) => p.classList.toggle("active", p.id === h));
   $$("[data-nav]").forEach((a) => a.classList.toggle("active", a.getAttribute("href") === "#" + h));
+  if (h === "admin" && typeof renderAdmin === "function") renderAdmin();
   window.scrollTo({ top: 0 });
 }
 addEventListener("hashchange", route);
@@ -986,8 +987,20 @@ function renderGuides() {
   setContent($("#guideList"), ...cards);
 }
 
+let scheduleData = (typeof SCHEDULE !== "undefined") ? SCHEDULE.slice() : [];
+
+async function loadSchedule() {
+  if (SB) {
+    try {
+      const { data } = await SB.from("app_settings").select("value").eq("key", "schedule").single();
+      if (data && Array.isArray(data.value)) scheduleData = data.value;
+    } catch {}
+  }
+  renderSchedule();
+}
+
 function renderSchedule() {
-  const rows = SCHEDULE.map((s) => {
+  const rows = scheduleData.map((s) => {
     const tr = el("tr");
     const td1 = el("td");
     td1.append(el("b", null, s.dia));
@@ -995,6 +1008,173 @@ function renderSchedule() {
     return tr;
   });
   setContent($("#scheduleTable tbody"), ...rows);
+}
+
+/* ============================================================
+   PAINEL ADMIN — moderação + horários (só admin, via RLS)
+   Admin = logado com Google e e-mail na tabela `admins`.
+   Tudo é reconferido no servidor; o front só reflete.
+   ============================================================ */
+let isAdmin = false;
+
+async function refreshAdmin() {
+  isAdmin = false;
+  if (SB && currentUser) {
+    try { const { data } = await SB.rpc("is_admin"); isAdmin = !!data; } catch {}
+  }
+  const link = $("#adminNavLink");
+  if (link) link.classList.toggle("hide", !isAdmin);
+  if (location.hash === "#admin") renderAdmin();
+}
+
+function adminMsg(text, withLogin) {
+  const gate = $("#adminGate"), panel = $("#adminPanel");
+  panel.classList.add("hide");
+  const body = el("div", "ro-window__body");
+  body.append(el("p", "muted", text));
+  if (withLogin) {
+    const b = el("button", "btn-google", null);
+    b.type = "button"; b.style.marginTop = "12px";
+    b.append(el("span", "g", "G"), el("span", null, "Entrar com Google"));
+    b.addEventListener("click", loginGoogle);
+    body.append(b);
+  }
+  gate.replaceChildren(body);
+  gate.classList.remove("hide");
+}
+
+async function renderAdmin() {
+  if (!SB) return adminMsg("O painel admin precisa do Supabase configurado.");
+  if (!currentUser) return adminMsg("Entre com sua conta Google para acessar o painel de administração.", true);
+  if (!isAdmin) { try { const { data } = await SB.rpc("is_admin"); isAdmin = !!data; } catch {} }
+  if (!isAdmin) return adminMsg(`A conta ${currentUser.email || ""} não é administradora. Fale com o Hari para liberar.`);
+  $("#adminGate").classList.add("hide");
+  const panel = $("#adminPanel");
+  panel.classList.remove("hide");
+  panel.replaceChildren(adminScheduleCard(), adminModerationCard(), adminAdminsCard());
+}
+
+function adminWindow(title) {
+  const win = el("div", "ro-window");
+  const t = el("div", "ro-window__title", title);
+  const body = el("div", "ro-window__body");
+  win.append(t, body);
+  return { win, body };
+}
+
+/* --- editor de horários --- */
+function adminScheduleCard() {
+  const { win, body } = adminWindow("🕒 Horários das lives");
+  const rowsBox = el("div", "stack"); rowsBox.style.gap = "8px";
+  const draft = scheduleData.map((s) => ({ ...s }));
+  const drawRows = () => {
+    const nodes = draft.map((s, i) => {
+      const row = el("div", "row"); row.style.gap = "8px";
+      const dia = el("input", "ro-input"); dia.value = s.dia; dia.placeholder = "Dia"; dia.style.flex = "1";
+      const hora = el("input", "ro-input"); hora.value = s.hora; hora.placeholder = "Hora"; hora.style.width = "90px";
+      const tema = el("input", "ro-input"); tema.value = s.tema; tema.placeholder = "Tema"; tema.style.flex = "2";
+      dia.addEventListener("input", () => (draft[i].dia = dia.value));
+      hora.addEventListener("input", () => (draft[i].hora = hora.value));
+      tema.addEventListener("input", () => (draft[i].tema = tema.value));
+      const del = el("button", "ro-btn ro-btn--small ro-btn--danger", "✕"); del.type = "button";
+      del.addEventListener("click", () => { draft.splice(i, 1); drawRows(); });
+      row.append(dia, hora, tema, del);
+      return row;
+    });
+    rowsBox.replaceChildren(...nodes);
+  };
+  drawRows();
+  const add = el("button", "ro-btn ro-btn--small ro-btn--ghost", "+ Adicionar dia"); add.type = "button";
+  add.addEventListener("click", () => { draft.push({ dia: "", hora: "", tema: "" }); drawRows(); });
+  const saveBtn = el("button", "ro-btn", "💾 Salvar horários"); saveBtn.type = "button";
+  saveBtn.addEventListener("click", async () => {
+    const clean = draft.filter((s) => s.dia.trim() && s.hora.trim());
+    saveBtn.disabled = true;
+    const { error } = await SB.from("app_settings").upsert({ key: "schedule", value: clean, updated_at: new Date().toISOString() });
+    saveBtn.disabled = false;
+    if (error) return toast("Não consegui salvar (você é admin?).");
+    scheduleData = clean; renderSchedule();
+    toast("Horários atualizados no site! 🕒");
+  });
+  const actions = el("div", "row mt12"); actions.style.gap = "8px";
+  actions.append(add, saveBtn);
+  body.append(el("p", "muted", "Edite e salve — reflete na aba Guilda na hora, sem redeploy."), rowsBox, actions);
+  body.querySelector("p").style.marginBottom = "12px";
+  return win;
+}
+
+/* --- moderação de anúncios --- */
+function adminModerationCard() {
+  const { win, body } = adminWindow("🧹 Moderar anúncios");
+  const container = el("div", "stack"); container.style.gap = "16px";
+  const mkList = (title, posts, table, refetch) => {
+    const box = el("div");
+    box.append(el("h3", null, title));
+    box.querySelector("h3").style.cssText = "font-family:var(--f-serif);margin-bottom:8px";
+    if (!posts.length) { box.append(el("p", "muted", "Nenhum anúncio.")); return box; }
+    const rows = posts.map((p) => {
+      const row = el("div", "row"); row.style.cssText = "justify-content:space-between;gap:8px;padding:8px;border-bottom:1px dashed var(--ro-frame)";
+      const label = table === "party_posts"
+        ? `${p.nick} · ${p.classe} Lv.${p.nivel} · ${p.objetivo}`
+        : `${p.tipo === "vendo" ? "Vendo" : "Compro"}: ${p.item} · ${fmtZeny(p.preco)}z`;
+      row.append(el("span", null, label));
+      const del = el("button", "ro-btn ro-btn--small ro-btn--danger", "Remover"); del.type = "button";
+      del.addEventListener("click", async () => {
+        const { error } = await SB.from(table).delete().eq("id", p.id);
+        if (error) return toast("Falha ao remover.");
+        toast("Anúncio removido.");
+        await refetch(); renderAdmin();
+        if (table === "party_posts") renderParty(); else renderTrade();
+      });
+      row.append(del);
+      return row;
+    });
+    rows.forEach((r) => box.append(r));
+    return box;
+  };
+  container.append(
+    mkList(`Party (${partyPosts.length})`, partyPosts, "party_posts", fetchParty),
+    mkList(`Trade (${tradePosts.length})`, tradePosts, "trade_posts", fetchTrade),
+  );
+  body.append(container);
+  return win;
+}
+
+/* --- gerenciar admins --- */
+function adminAdminsCard() {
+  const { win, body } = adminWindow("👑 Administradores");
+  const listBox = el("div", "stack"); listBox.style.gap = "6px";
+  const refresh = async () => {
+    let admins = [];
+    try { const { data } = await SB.from("admins").select("email").order("added_at"); admins = data || []; } catch {}
+    const nodes = admins.map((a) => {
+      const row = el("div", "row"); row.style.cssText = "justify-content:space-between;gap:8px";
+      row.append(el("span", null, a.email));
+      const del = el("button", "ro-btn ro-btn--small ro-btn--ghost", "Remover"); del.type = "button";
+      del.addEventListener("click", async () => {
+        if (a.email.toLowerCase() === (currentUser.email || "").toLowerCase()) return toast("Não remova a si mesmo.");
+        await SB.from("admins").delete().eq("email", a.email); refresh();
+      });
+      row.append(del);
+      return row;
+    });
+    listBox.replaceChildren(...(nodes.length ? nodes : [el("p", "muted", "—")]));
+  };
+  refresh();
+  const inp = el("input", "ro-input"); inp.placeholder = "email@do-novo-admin.com"; inp.type = "email"; inp.style.flex = "1";
+  const addBtn = el("button", "ro-btn ro-btn--small", "+ Add"); addBtn.type = "button";
+  addBtn.addEventListener("click", async () => {
+    const email = inp.value.trim().toLowerCase();
+    if (!email || !email.includes("@")) return toast("E-mail inválido.");
+    const { error } = await SB.from("admins").insert({ email });
+    if (error) return toast("Não consegui adicionar.");
+    inp.value = ""; refresh(); toast("Admin adicionado!");
+  });
+  const addRow = el("div", "row mt12"); addRow.style.gap = "8px";
+  addRow.append(inp, addBtn);
+  body.append(el("p", "muted", "Quem estiver aqui e logar com Google vira admin."), listBox, addRow);
+  body.querySelector("p").style.marginBottom = "10px";
+  return win;
 }
 
 /* ============================================================
@@ -1059,11 +1239,13 @@ async function initAuth() {
   } catch {}
   renderAuth();
   prefillFromUser();
+  refreshAdmin();
   SB.auth.onAuthStateChange((_e, session) => {
     const was = currentUser;
     currentUser = session?.user || null;
     renderAuth();
     prefillFromUser();
+    refreshAdmin();
     if (currentUser && !was) toast(`Bem-vindo, ${(currentUser.user_metadata?.name || "aventureiro").split(" ")[0]}! ⚔️`);
   });
 }
@@ -1103,7 +1285,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderHomunculus();
   renderArsenal();
   renderGuides();
-  renderSchedule();
+  loadSchedule();
   initTilt();
   initHeroParallax();
 });

@@ -12,7 +12,7 @@ const CANAL = {
   nome: "Bihelz TV",
   youtube: "@bihelzs",
   youtubeChannelId: "UCDr0kxeySD8NlVFpkI5W1Pw", // canal "bihelz tv" — as lives acontecem aqui
-  instagram: "@bihelztv",
+  instagram: "@bielz_life",
   discordConvite: "https://discord.gg/w36y82XZp",
   discordNome: "Laboranok do Ragnatório",
   // Chave da YouTube Data API v3 (pública, restrinja por referrer no Google Cloud).
