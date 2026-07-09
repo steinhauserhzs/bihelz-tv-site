@@ -39,13 +39,14 @@ async function copyText(text, okMsg) {
 }
 
 /* ---------- Router (hash) ---------- */
-const ROUTES = ["home", "noticias", "party", "mercado", "mvp", "lab", "buscar", "guias", "comunidade", "admin"];
+const ROUTES = ["home", "noticias", "party", "mercado", "mvp", "lab", "buscar", "blog", "database", "nostalgia", "guias", "comunidade", "admin"];
 function route() {
   let h = (location.hash || "#home").slice(1);
   if (!ROUTES.includes(h)) h = "home";
   $$(".page").forEach((p) => p.classList.toggle("active", p.id === h));
   $$("[data-nav]").forEach((a) => a.classList.toggle("active", a.getAttribute("href") === "#" + h));
   if (h === "admin" && typeof renderAdmin === "function") renderAdmin();
+  if (h === "blog" && typeof loadBlog === "function") loadBlog();
   window.scrollTo({ top: 0 });
 }
 addEventListener("hashchange", route);
@@ -1112,6 +1113,116 @@ function renderSchedule() {
 }
 
 /* ============================================================
+   BLOG DA COMUNIDADE (Supabase, publicar só logado)
+   ============================================================ */
+const blogLiked = new Set();
+
+function blogAuthorName() {
+  const m = (currentUser && currentUser.user_metadata) || {};
+  return (m.full_name || m.name || (currentUser && currentUser.email) || "Aventureiro");
+}
+
+async function loadBlog() {
+  renderBlogCompose();
+  const list = $("#blogList");
+  if (!list) return;
+  if (!SB) return setContent(list, emptyState("🔒", "O blog precisa do Supabase configurado."));
+  const { data, error } = await SB.from("blog_posts").select("*").order("created_at", { ascending: false }).limit(60);
+  if (error) return setContent(list, emptyState("😕", "Não consegui carregar o blog agora."));
+  blogLiked.clear();
+  if (currentUser) {
+    try { const { data: likes } = await SB.from("blog_likes").select("post_id"); (likes || []).forEach((l) => blogLiked.add(l.post_id)); } catch {}
+  }
+  renderBlogList(data || []);
+}
+
+function renderBlogCompose() {
+  const box = $("#blogCompose");
+  if (!box) return;
+  if (!SB) { box.replaceChildren(); return; }
+  if (!currentUser) {
+    const win = el("div", "ro-window");
+    const body = el("div", "ro-window__body center");
+    body.append(el("p", "muted", "Entre com sua conta Google pra escrever no blog da guilda."));
+    const b = el("button", "btn-google", null); b.type = "button"; b.style.marginTop = "12px";
+    b.append(el("span", "g", "G"), el("span", null, "Entrar com Google"));
+    b.addEventListener("click", loginGoogle);
+    body.append(b); win.append(body); box.replaceChildren(win);
+    return;
+  }
+  const win = el("div", "ro-window");
+  const t = el("div", "ro-window__title", "✍️ Escrever post");
+  const body = el("div", "ro-window__body stack"); body.style.gap = "10px";
+  const titleI = el("input", "ro-input"); titleI.placeholder = "Título do post"; titleI.maxLength = 120;
+  const bodyI = el("textarea", "ro-textarea"); bodyI.placeholder = "Escreve teu guia, relato, dica, teoria..."; bodyI.maxLength = 8000; bodyI.style.minHeight = "120px";
+  const btn = el("button", "ro-btn", "📢 Publicar"); btn.type = "button";
+  btn.addEventListener("click", async () => {
+    const title = titleI.value.trim(), b = bodyI.value.trim();
+    if (title.length < 3 || !b) return toast("Escreve um título (3+) e um texto.");
+    btn.disabled = true;
+    const m = currentUser.user_metadata || {};
+    const { error } = await SB.from("blog_posts").insert({
+      author_id: currentUser.id, author_name: blogAuthorName(),
+      author_avatar: m.avatar_url || null, title, body: b,
+    });
+    btn.disabled = false;
+    if (error) return toast("Não consegui publicar — tenta de novo.");
+    titleI.value = ""; bodyI.value = "";
+    toast("Post publicado pra guilda! 📢");
+    loadBlog();
+  });
+  body.append(el("div", "muted", "Publicando como " + blogAuthorName()), titleI, bodyI, btn);
+  win.append(t, body); box.replaceChildren(win);
+}
+
+function renderBlogList(posts) {
+  const box = $("#blogList");
+  if (!posts.length) return setContent(box, emptyState("📝", "Nenhum post ainda. Seja o primeiro a escrever pra guilda!"));
+  setContent(box, ...posts.map(blogCard));
+}
+
+function blogCard(p) {
+  const art = el("article", "ro-window blog-card");
+  const body = el("div", "ro-window__body");
+  const head = el("div", "blog-head");
+  if (p.author_avatar) {
+    const img = document.createElement("img"); img.className = "blog-av"; img.src = p.author_avatar; img.alt = ""; img.referrerPolicy = "no-referrer"; img.loading = "lazy";
+    head.append(img);
+  } else head.append(el("div", "blog-av blog-av--ph", "🧪"));
+  const who = el("div");
+  who.append(el("div", "blog-author", p.author_name), el("div", "blog-date", new Date(p.created_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })));
+  head.append(who);
+  body.append(head, el("h3", "blog-title", p.title), el("p", "blog-body", p.body));
+
+  const actions = el("div", "blog-actions");
+  const liked = blogLiked.has(p.id);
+  const like = el("button", "blog-like" + (liked ? " liked" : ""), null); like.type = "button";
+  like.append(document.createTextNode((liked ? "❤️" : "🤍") + " "), el("span", "blog-like__n", String(p.likes || 0)));
+  like.addEventListener("click", async () => {
+    if (!currentUser) return toast("Entre com Google pra curtir.");
+    const { data, error } = await SB.rpc("toggle_blog_like", { p_post: p.id });
+    if (error) return toast("Não consegui curtir agora.");
+    if (blogLiked.has(p.id)) blogLiked.delete(p.id); else blogLiked.add(p.id);
+    const nl = blogLiked.has(p.id);
+    like.className = "blog-like" + (nl ? " liked" : "");
+    like.replaceChildren(document.createTextNode((nl ? "❤️" : "🤍") + " "), el("span", "blog-like__n", String(data)));
+  });
+  actions.append(like);
+  if (currentUser && (currentUser.id === p.author_id || isAdmin)) {
+    const del = el("button", "ro-btn ro-btn--small ro-btn--danger", "✕ Apagar"); del.type = "button";
+    del.addEventListener("click", async () => {
+      const { error } = await SB.from("blog_posts").delete().eq("id", p.id);
+      if (error) return toast("Falha ao apagar.");
+      toast("Post apagado."); loadBlog();
+    });
+    actions.append(del);
+  }
+  body.append(actions);
+  art.append(body);
+  return art;
+}
+
+/* ============================================================
    DISCORD — card ao vivo (membros + online), via API pública
    Contagem: /invites/{code}?with_counts=true (CORS liberado).
    Lista de online (avatares): widget.json — só aparece se o
@@ -1180,6 +1291,108 @@ function renderDiscord(info, members) {
   }
   win.append(body);
   box.replaceChildren(win);
+}
+
+/* ============================================================
+   DATABASE — itens icônicos + pré-builds (dados em data.js)
+   ============================================================ */
+let itemFilter = "todos", itemQuery = "";
+function strongLine(label, text) { const p = el("p"); p.append(el("b", null, label), document.createTextNode(text)); return p; }
+
+function initDatabase() {
+  const ti = $("#dbTabItens"), tb = $("#dbTabBuilds");
+  if (!ti) return;
+  ti.addEventListener("click", () => { ti.classList.add("active"); tb.classList.remove("active"); $("#dbItens").classList.remove("hide"); $("#dbBuilds").classList.add("hide"); });
+  tb.addEventListener("click", () => { tb.classList.add("active"); ti.classList.remove("active"); $("#dbBuilds").classList.remove("hide"); $("#dbItens").classList.add("hide"); });
+  const s = $("#itemSearch");
+  if (s) s.addEventListener("input", () => { itemQuery = s.value.trim().toLowerCase(); renderItems(); });
+  renderItems();
+  renderBuilds();
+}
+
+function itemCard(i) {
+  const c = el("div", "db-card" + (i.nostalgico ? " is-nost" : ""));
+  const nm = el("div", "nm");
+  nm.append(document.createTextNode(i.nome));
+  if (i.nostalgico) nm.append(el("span", "nost-badge", "clássico"));
+  c.append(nm, el("div", "tag", i.tipo), el("div", "eff", i.efeito));
+  return c;
+}
+function renderItems() {
+  if (typeof ESSENTIAL_ITEMS === "undefined" || !$("#itemGrid")) return;
+  const cats = ["todos", ...Array.from(new Set(ESSENTIAL_ITEMS.map((i) => i.tipo)))];
+  chipButtons($("#itemFilters"), cats.map((c) => [c, c === "todos" ? "Todos" : c]), itemFilter, (k) => { itemFilter = k; renderItems(); });
+  let list = ESSENTIAL_ITEMS;
+  if (itemFilter !== "todos") list = list.filter((i) => i.tipo === itemFilter);
+  if (itemQuery) list = list.filter((i) => (i.nome + " " + i.efeito).toLowerCase().includes(itemQuery));
+  const cards = list.map(itemCard);
+  setContent($("#itemGrid"), ...(cards.length ? cards : [emptyState("🔍", "Nenhum item encontrado.")]));
+}
+
+function renderBuilds() {
+  if (typeof PRE_BUILDS === "undefined" || !$("#buildList")) return;
+  const cards = PRE_BUILDS.map((b) => {
+    const win = el("div", "ro-window build-card");
+    const body = el("div", "ro-window__body");
+    const det = el("details");
+    const sum = el("summary");
+    sum.append(el("div", "ro-slot", "⚔️"));
+    const info = el("div");
+    info.append(el("h3", null, `${b.nome} — ${b.classe}`), el("div", "bmeta", b.foco));
+    sum.append(info, el("span", "arrow", "▼"));
+    const content = el("div", "content");
+    content.append(strongLine("Atributos: ", b.stats));
+    if (b.skills && b.skills.length) { const sk = el("div", "chips"); b.skills.forEach((s) => sk.append(el("span", "chip", s))); content.append(el("div", null, "Skills principais:"), sk); }
+    if (b.equips && b.equips.length) { const eq = el("div", "chips"); b.equips.forEach((s) => eq.append(el("span", "chip", s))); content.append(el("div", null, "Equipamentos:"), eq); }
+    content.append(el("p", null, b.descricao));
+    det.append(sum, content); body.append(det); win.append(body);
+    return win;
+  });
+  setContent($("#buildList"), ...cards);
+}
+
+/* ============================================================
+   NOSTALGIA — BGMs, ícones, fatos, memes (dados em data.js)
+   ============================================================ */
+function initNostalgia() {
+  if (typeof NOSTALGIA === "undefined") return;
+  if ($("#bgmList") && Array.isArray(NOSTALGIA.bgms)) {
+    const chips = NOSTALGIA.bgms.map((b) => {
+      const c = el("button", "bgm-chip", "🎵 " + b.titulo); c.type = "button";
+      c.title = b.contexto || "";
+      c.addEventListener("click", () => playBgm(b, c));
+      return c;
+    });
+    setContent($("#bgmList"), ...chips);
+  }
+  if ($("#iconicGrid") && Array.isArray(NOSTALGIA.iconicos)) {
+    const ic = NOSTALGIA.iconicos.map((i) => {
+      const c = el("div", "db-card is-nost");
+      c.append(el("div", "nm", (i.emoji ? i.emoji + " " : "") + i.nome), el("div", "tag", i.categoria), el("div", "eff", i.descricao));
+      return c;
+    });
+    setContent($("#iconicGrid"), ...ic);
+  }
+  if ($("#factsGrid") && Array.isArray(NOSTALGIA.fatos)) {
+    const facts = NOSTALGIA.fatos.map((f) => { const c = el("div", "fact-card"); c.append(el("h4", null, f.titulo), el("p", null, f.texto)); return c; });
+    setContent($("#factsGrid"), ...facts);
+  }
+  if ($("#memesList") && Array.isArray(NOSTALGIA.memes)) {
+    setContent($("#memesList"), ...NOSTALGIA.memes.map((m) => el("span", "meme-chip", `"${m}"`)));
+  }
+}
+function playBgm(b, chip) {
+  const box = $("#bgmPlayer");
+  $$("#bgmList .bgm-chip").forEach((c) => c.classList.remove("playing"));
+  chip.classList.add("playing");
+  if (window.BZRadio && window.BZRadio.isPlaying()) window.BZRadio.pause();
+  const f = document.createElement("iframe");
+  f.className = "bgm-frame";
+  f.src = `https://www.youtube.com/embed/${b.youtubeId}?autoplay=1`;
+  f.allow = "autoplay; encrypted-media";
+  f.title = b.titulo;
+  setContent(box, f);
+  box.classList.remove("hide");
 }
 
 /* ============================================================
@@ -1418,6 +1631,7 @@ async function initAuth() {
     renderAuth();
     prefillFromUser();
     refreshAdmin();
+    if (location.hash === "#blog") loadBlog(); else renderBlogCompose();
     if (currentUser && !was) toast(`Bem-vindo, ${(currentUser.user_metadata?.name || "aventureiro").split(" ")[0]}! ⚔️`);
   });
 }
@@ -1461,6 +1675,8 @@ document.addEventListener("DOMContentLoaded", () => {
   loadSchedule();
   loadDiscord();
   setInterval(loadDiscord, 90000);
+  initDatabase();
+  initNostalgia();
   initTilt();
   initHeroParallax();
 });

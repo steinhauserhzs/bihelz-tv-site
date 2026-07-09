@@ -13,8 +13,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;700&family=Poppins:wght@400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/ragnarok.css?v=20260709d">
-<link rel="stylesheet" href="assets/css/v2.css?v=20260709d">
+<link rel="stylesheet" href="assets/css/ragnarok.css?v=20260709e">
+<link rel="stylesheet" href="assets/css/v2.css?v=20260709e">
 </head>
 <body>
 
@@ -32,7 +32,9 @@
       <a href="#mercado" data-nav>Trade</a>
       <a href="#mvp" data-nav>MVP</a>
       <a href="#lab" data-nav>Lab</a>
-      <a href="#buscar" data-nav>Buscar</a>
+      <a href="#database" data-nav>Itens</a>
+      <a href="#blog" data-nav>Blog</a>
+      <a href="#nostalgia" data-nav>Nostalgia</a>
       <a href="#guias" data-nav>Guias</a>
       <a href="#comunidade" data-nav>Guilda</a>
       <a href="#admin" id="adminNavLink" class="hide" data-nav>🛡️ Admin</a>
@@ -161,6 +163,24 @@
         <div class="ro-window"><div class="ro-window__body row">
           <div class="img-slot"><img src="assets/img/icon-live.jpg" alt=""></div>
           <div style="flex:1"><h3 style="font-family:var(--f-serif)">Central do Aventureiro</h3><p class="muted" style="font-size:13px">Busque char, guilda, item ou carta nos melhores databases.</p></div>
+        </div></div>
+      </a>
+      <a href="#blog" class="float-3d" style="text-decoration:none">
+        <div class="ro-window"><div class="ro-window__body row">
+          <div class="ro-slot">📝</div>
+          <div style="flex:1"><h3 style="font-family:var(--f-serif)">Blog da Comunidade</h3><p class="muted" style="font-size:13px">Escreva guias e relatos pra guilda (login Google).</p></div>
+        </div></div>
+      </a>
+      <a href="#database" class="float-3d" style="text-decoration:none">
+        <div class="ro-window"><div class="ro-window__body row">
+          <div class="ro-slot">🎒</div>
+          <div style="flex:1"><h3 style="font-family:var(--f-serif)">Itens &amp; Builds</h3><p class="muted" style="font-size:13px">Itens icônicos e pré-builds prontas das classes.</p></div>
+        </div></div>
+      </a>
+      <a href="#nostalgia" class="float-3d" style="text-decoration:none">
+        <div class="ro-window"><div class="ro-window__body row">
+          <div class="ro-slot">🕰️</div>
+          <div style="flex:1"><h3 style="font-family:var(--f-serif)">Nostalgia</h3><p class="muted" style="font-size:13px">O RO de antigamente: BGMs, ícones e memórias.</p></div>
         </div></div>
       </a>
       <a href="#comunidade" class="float-3d" style="text-decoration:none">
@@ -372,6 +392,58 @@
     <div class="arsenal-grid" id="searchDestinos"></div>
   </section>
 
+  <!-- ===================== BLOG ===================== -->
+  <section class="page" id="blog">
+    <div class="section-head"><h2>Blog da Comunidade</h2><div class="rule"></div></div>
+    <p class="section-sub">Guias, relatos, prints épicos, teorias malucas... escreva pra guilda! Ler é livre; <b>publicar precisa entrar com o Google</b>.</p>
+    <div id="blogCompose" style="margin-bottom:18px"></div>
+    <div class="stack" id="blogList"></div>
+  </section>
+
+  <!-- ===================== DATABASE (itens + builds) ===================== -->
+  <section class="page" id="database">
+    <div class="section-head"><h2>Database &amp; Builds</h2><div class="rule"></div></div>
+    <p class="section-sub">Itens icônicos e pré-builds prontas das classes. Pra o catálogo completo, use a busca da <a href="#buscar">Central do Aventureiro</a>.</p>
+    <div class="stream-tabs" role="tablist" style="max-width:320px">
+      <button type="button" id="dbTabItens" class="active">🎒 Itens</button>
+      <button type="button" id="dbTabBuilds">⚔️ Pré-builds</button>
+    </div>
+    <div id="dbItens">
+      <div class="row" id="itemFilters" style="margin-bottom:14px"></div>
+      <input class="ro-input" id="itemSearch" placeholder="Buscar item por nome ou efeito..." style="max-width:420px;margin-bottom:14px">
+      <div class="db-grid" id="itemGrid"></div>
+    </div>
+    <div id="dbBuilds" class="hide">
+      <div class="stack" id="buildList"></div>
+    </div>
+  </section>
+
+  <!-- ===================== NOSTALGIA ===================== -->
+  <section class="page" id="nostalgia">
+    <div class="section-head"><h2>Nostalgia — o RO de antigamente</h2><div class="rule"></div></div>
+    <p class="section-sub">Uma cápsula do tempo pra quem viveu a era clássica de Rune-Midgard. 🕰️</p>
+
+    <div class="ro-window tilt" style="margin-bottom:18px">
+      <div class="ro-window__title">🎵 Trilha sonora clássica<span class="ro-window__x">✕</span></div>
+      <div class="ro-window__body">
+        <p class="muted" style="font-size:13px;margin-bottom:12px">As BGMs que marcaram época. Dá play e volta pra 2005. 🎧</p>
+        <div class="row" id="bgmList" style="gap:8px"></div>
+        <div id="bgmPlayer" class="mt12 hide"></div>
+      </div>
+    </div>
+
+    <div class="section-head"><h2 style="font-size:22px">Ícones eternos</h2><div class="rule"></div></div>
+    <div class="db-grid" id="iconicGrid"></div>
+
+    <div class="section-head"><h2 style="font-size:22px">Você lembra?</h2><div class="rule"></div></div>
+    <div class="grid grid--2" id="factsGrid"></div>
+
+    <div class="ro-window mt16">
+      <div class="ro-window__title">😂 Bordões da guilda<span class="ro-window__x">✕</span></div>
+      <div class="ro-window__body"><div class="row" id="memesList" style="gap:8px"></div></div>
+    </div>
+  </section>
+
   <!-- ===================== GUIAS ===================== -->
   <section class="page" id="guias">
     <div class="section-head"><h2>Guias da Guilda</h2><div class="rule"></div></div>
@@ -463,9 +535,9 @@
 <div class="sys-toast" id="sysToast" role="status" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="assets/js/supabase-config.js?v=20260709d"></script>
-<script src="assets/js/data.js?v=20260709d"></script>
-<script src="assets/js/app.js?v=20260709d"></script>
-<script src="assets/js/radio.js?v=20260709d"></script>
+<script src="assets/js/supabase-config.js?v=20260709e"></script>
+<script src="assets/js/data.js?v=20260709e"></script>
+<script src="assets/js/app.js?v=20260709e"></script>
+<script src="assets/js/radio.js?v=20260709e"></script>
 </body>
 </html>

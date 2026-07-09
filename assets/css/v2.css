@@ -205,6 +205,54 @@
 .disc-avatars{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;padding-top:12px;border-top:1px dashed var(--ro-frame)}
 .disc-av{width:34px;height:34px;border-radius:50%;border:2px solid #5865F2;object-fit:cover;background:#241047}
 
+/* ---------- Blog da comunidade ---------- */
+.blog-card .ro-window__body{padding:16px 18px}
+.blog-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.blog-av{width:40px;height:40px;flex:0 0 40px;border-radius:50%;object-fit:cover;border:2px solid var(--bz-gold);background:#241047}
+.blog-av--ph{display:grid;place-items:center;font-size:20px}
+.blog-author{font-family:var(--f-serif);font-weight:700;font-size:15px;color:var(--ro-ink)}
+.blog-date{font-family:var(--f-hud);font-weight:600;font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:var(--ro-ink-soft)}
+.blog-title{font-family:var(--f-serif);font-size:19px;line-height:1.25;margin-bottom:8px;color:var(--ro-ink)}
+.blog-body{font-size:14.5px;line-height:1.6;color:var(--ro-ink);white-space:pre-wrap;word-break:break-word}
+.blog-actions{display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:12px;border-top:1px dashed var(--ro-frame)}
+.blog-like{display:inline-flex;align-items:center;gap:2px;cursor:pointer;background:var(--ro-parch-3);border:1.5px solid var(--ro-frame);border-radius:20px;padding:5px 12px;font-family:var(--f-hud);font-weight:700;font-size:13px;color:var(--ro-ink);transition:all .12s}
+.blog-like:hover{filter:brightness(1.04)}
+.blog-like.liked{background:#ffe3f0;border-color:#e08bb4;color:#a41f5c}
+.blog-like__n{font-variant-numeric:tabular-nums}
+
+/* ---------- Grids de Database / Nostalgia ---------- */
+.db-grid{display:grid;gap:12px;grid-template-columns:1fr}
+@media(min-width:600px){.db-grid{grid-template-columns:1fr 1fr}}
+@media(min-width:960px){.db-grid{grid-template-columns:1fr 1fr 1fr}}
+.db-card{padding:13px 14px;border-radius:10px;border:1.5px solid var(--ro-frame);background:linear-gradient(180deg,#fdf6e4,var(--ro-parch))}
+.db-card.is-nost{border-color:var(--bz-violet);box-shadow:0 0 0 1px rgba(199,125,255,.25)}
+.db-card .nm{display:flex;align-items:center;gap:8px;font-family:var(--f-serif);font-weight:700;font-size:15px;color:var(--ro-ink)}
+.db-card .tag{font-family:var(--f-hud);font-weight:700;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#5f1ba8;margin-top:2px}
+.db-card .eff{font-size:13px;line-height:1.5;color:var(--ro-ink-soft);margin-top:6px}
+.db-card .nost-badge{display:inline-block;font-family:var(--f-hud);font-weight:700;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#fff;background:linear-gradient(90deg,var(--bz-purple),var(--bz-violet));padding:2px 7px;border-radius:10px;margin-left:auto}
+
+/* pré-builds */
+.build-card summary{display:flex;align-items:center;gap:12px;cursor:pointer;list-style:none}
+.build-card summary::-webkit-details-marker{display:none}
+.build-card summary .arrow{margin-left:auto;font-size:12px;color:var(--ro-ink-soft);transition:transform .2s}
+.build-card details[open] summary .arrow{transform:rotate(180deg)}
+.build-card h3{font-family:var(--f-serif);font-size:16px}
+.build-card .bmeta{font-family:var(--f-hud);font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#5f1ba8}
+.build-card .content{margin-top:12px;font-size:14px;line-height:1.6;border-top:1px dashed var(--ro-frame);padding-top:12px}
+.build-card .content b{color:#5f1ba8}
+.build-card .chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.build-card .chip{font-family:var(--f-hud);font-weight:600;font-size:11px;padding:3px 9px;border-radius:12px;background:var(--ro-parch-3);border:1px solid var(--ro-frame);color:var(--ro-ink)}
+
+/* nostalgia: bgm + fatos + memes */
+.bgm-chip{font-family:var(--f-hud);font-weight:700;font-size:12px;letter-spacing:.5px;cursor:pointer;padding:7px 14px;border-radius:20px;border:1.5px solid var(--bz-gold-dark);background:linear-gradient(180deg,#2c1258,#1a0c36);color:var(--bz-gold-light);transition:all .12s;display:inline-flex;align-items:center;gap:6px}
+.bgm-chip:hover{filter:brightness(1.12)}
+.bgm-chip.playing{background:linear-gradient(180deg,var(--bz-gold-light),var(--bz-gold));color:#2a1206;border-color:var(--ro-frame-dark)}
+.bgm-frame{width:100%;aspect-ratio:16/9;max-height:220px;border:2px solid var(--ro-frame-dark);border-radius:8px;background:#0a0512}
+.fact-card{padding:14px 16px;border-radius:10px;border:1.5px solid var(--ro-frame);background:linear-gradient(180deg,#fdf6e4,var(--ro-parch))}
+.fact-card h4{font-family:var(--f-serif);font-size:15px;color:var(--ro-ink);margin-bottom:5px}
+.fact-card p{font-size:13.5px;line-height:1.55;color:var(--ro-ink-soft)}
+.meme-chip{font-size:13px;font-style:italic;padding:7px 14px;border-radius:18px;background:var(--ro-parch-3);border:1px dashed var(--ro-frame);color:var(--ro-ink)}
+
 /* ---------- Contador ao vivo (views / curtidas / assistindo) ---------- */
 .live-stats{display:flex;gap:8px;margin-bottom:12px}
 .live-stat{
