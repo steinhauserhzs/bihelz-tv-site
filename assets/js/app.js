@@ -1,6 +1,6 @@
 /* ============================================================
    BIHELZ TV — APP v2 "Laboranok"
-   Router SPA + streams (Twitch/YouTube) + notícias + party +
+   Router SPA + YouTube (live + chat) + login Google + notícias + party +
    trade + timer de MVP + Lab do Cientista + efeitos 3D.
    Segurança: conteúdo de input do usuário é montado com
    createElement/textContent (nunca interpretado como HTML);
@@ -148,7 +148,7 @@ const NPC_MSGS = [
   "Poring! Bem-vindo ao Laboranok do Ragnatório, aventureiro! ♪",
   "Aqui tem notícia diária, party, trade, timer de MVP... e o meu laboratório novinho, poring!",
   "Aperta F6 pra entrar no Lab do Cientista: Farmacologia Especial, homúnculos e tabela elemental!",
-  "As lives do Bihelz rolam na Twitch E no YouTube — escolhe a aba ali na Transmissão.",
+  "As lives do Bihelz rolam no YouTube — dá pra assistir e usar o chat aqui do site!",
   "As inscrições do Stars LATAM 2026 fecham dia 20/07... monta tua equipe, poring!",
   "Agora segue o Bihelz e entra no Discord... ou eu misturo você num frasco! ♪",
 ];
@@ -166,62 +166,72 @@ function npcSay(i) {
 }
 
 /* ============================================================
-   STATUS AO VIVO + STREAMS (Twitch / YouTube)
+   YOUTUBE — player, detecção de live e chat da live
+   Com CANAL.youtubeApiKey: detecta a live atual (videoId) e
+   embeda o CHAT REAL do YouTube (os usuários interagem com a
+   própria conta do YouTube). Sem a key: player do canal + link.
    ============================================================ */
+let liveVideoId = null;
+const YT_CACHE = "bz_yt_live";
+const ytKey = () => (typeof CANAL !== "undefined" && CANAL.youtubeApiKey) || "";
+
+async function detectLive() {
+  if (!ytKey()) return null;
+  try {
+    const c = JSON.parse(localStorage.getItem(YT_CACHE) || "null");
+    if (c && Date.now() - c.ts < 4 * 60 * 1000) return c.videoId; // cache 4 min p/ poupar quota
+  } catch {}
+  try {
+    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CANAL.youtubeChannelId}&eventType=live&type=video&maxResults=1&key=${ytKey()}`;
+    const r = await fetch(url);
+    if (!r.ok) return null;
+    const d = await r.json();
+    const videoId = d.items && d.items[0] ? d.items[0].id.videoId : null;
+    localStorage.setItem(YT_CACHE, JSON.stringify({ ts: Date.now(), videoId }));
+    return videoId;
+  } catch { return null; }
+}
+
 async function checkLive() {
   const badge = $("#liveBadge"), txt = $("#liveText");
-  try {
-    const r = await fetch(`https://decapi.me/twitch/uptime/${CANAL.twitch}`);
-    const t = (await r.text()).toLowerCase();
-    const off = t.includes("offline") || t.includes("error") || t.includes("not found");
-    badge.classList.toggle("is-live", !off);
-    txt.textContent = off ? "OFFLINE" : "AO VIVO";
-  } catch { txt.textContent = "TWITCH"; }
+  if (!ytKey()) { txt.textContent = "YOUTUBE"; badge.classList.remove("is-live"); return; }
+  liveVideoId = await detectLive();
+  const live = !!liveVideoId;
+  badge.classList.toggle("is-live", live);
+  txt.textContent = live ? "AO VIVO" : "OFFLINE";
+  mountYouTube();
+  if (!$("#liveChatBox").classList.contains("hide")) mountChat(true);
 }
 
-let currentStream = "twitch";
-function mountStream(which = currentStream) {
-  currentStream = which;
-  $("#tabTwitch").classList.toggle("active", which === "twitch");
-  $("#tabYoutube").classList.toggle("active", which === "youtube");
-  const box = $("#streamBox");
-  const hint = $("#streamHint");
+function mountYouTube() {
+  const f = document.createElement("iframe");
+  f.className = "stream-frame";
+  f.src = liveVideoId
+    ? `https://www.youtube.com/embed/${liveVideoId}`
+    : `https://www.youtube.com/embed/live_stream?channel=${CANAL.youtubeChannelId}`;
+  f.allowFullscreen = true;
+  f.allow = "autoplay; encrypted-media; picture-in-picture";
+  f.title = "Live do Bihelz TV no YouTube";
+  setContent($("#streamBox"), f);
+}
+
+function mountChat(forceShow) {
+  const box = $("#liveChatBox"), btn = $("#toggleChat");
   const host = location.hostname;
-  const httpOk = host && location.protocol.startsWith("http");
-
-  if (which === "twitch") {
-    hint.textContent = "Se estiver offline aqui, testa a aba do YouTube — as lives rolam nos dois.";
-    if (!httpOk) return mountFallback(box, "O player da Twitch aparece quando o site está publicado.");
-    const f = document.createElement("iframe");
-    f.className = "stream-frame";
-    f.src = `https://player.twitch.tv/?channel=${CANAL.twitch}&parent=${host}&muted=true`;
-    f.allowFullscreen = true;
-    f.title = "Stream do Bihelz TV na Twitch";
-    setContent(box, f);
-  } else {
-    hint.textContent = "Player do YouTube: se não houver live agora, abre o canal e confere os últimos vídeos.";
-    const f = document.createElement("iframe");
-    f.className = "stream-frame";
-    f.src = `https://www.youtube.com/embed/live_stream?channel=${CANAL.youtubeChannelId}`;
-    f.allowFullscreen = true;
-    f.allow = "autoplay; encrypted-media; picture-in-picture";
-    f.title = "Live do Bihelz TV no YouTube";
-    const wrap = el("div");
-    wrap.append(f);
-    const open = el("a", "ro-btn ro-btn--small ro-btn--danger mt8", "▶️ Abrir canal @bihelzs");
-    open.href = `https://www.youtube.com/${CANAL.youtube}/live`;
-    open.target = "_blank";
-    open.rel = "noopener";
-    wrap.append(open);
-    setContent(box, wrap);
+  if (!liveVideoId) {
+    window.open("https://www.youtube.com/@bihelzs/live", "_blank", "noopener");
+    toast(ytKey() ? "Sem live agora — abrindo o YouTube." : "Chat embutido precisa da YouTube API key. Abrindo o YouTube por enquanto.");
+    return;
   }
-}
-function mountFallback(box, msg) {
-  const fb = el("div", "stream-fallback");
-  const tv = el("div", null, "📺");
-  tv.style.fontSize = "40px";
-  fb.append(tv, el("p", null, msg));
-  setContent(box, fb);
+  const showing = !box.classList.contains("hide");
+  if (showing && !forceShow) { box.classList.add("hide"); btn.textContent = "💬 Chat da live"; return; }
+  const f = document.createElement("iframe");
+  f.className = "chat-frame";
+  f.src = `https://www.youtube.com/live_chat?v=${liveVideoId}&embed_domain=${host}`;
+  f.title = "Chat da live do Bihelz TV";
+  setContent(box, f);
+  box.classList.remove("hide");
+  btn.textContent = "💬 Fechar chat";
 }
 
 /* ============================================================
@@ -988,17 +998,88 @@ function renderSchedule() {
 }
 
 /* ============================================================
+   LOGIN GOOGLE (Supabase Auth) — opcional e aditivo
+   Precisa do provedor Google ativado no painel do Supabase.
+   Logado: mostra avatar/nome e pré-preenche o nick do form.
+   ============================================================ */
+let currentUser = null;
+
+function renderAuth() {
+  const area = $("#authArea");
+  if (!area) return;
+  if (!SB) { area.classList.add("hide"); return; }
+  clearNode(area);
+  if (currentUser) {
+    const meta = currentUser.user_metadata || {};
+    const name = meta.full_name || meta.name || currentUser.email || "Aventureiro";
+    const wrap = el("div", "auth-user");
+    if (meta.avatar_url) {
+      const img = document.createElement("img");
+      img.className = "auth-avatar"; img.src = meta.avatar_url; img.alt = ""; img.referrerPolicy = "no-referrer";
+      wrap.append(img);
+    }
+    wrap.append(el("span", "auth-name", name.split(" ")[0]));
+    const out = el("button", "ro-btn ro-btn--small ro-btn--ghost", "Sair");
+    out.type = "button";
+    out.addEventListener("click", () => SB.auth.signOut());
+    wrap.append(out);
+    area.append(wrap);
+  } else {
+    const btn = el("button", "btn-google", null);
+    btn.type = "button";
+    btn.append(el("span", "g", "G"), el("span", null, "Entrar com Google"));
+    btn.addEventListener("click", loginGoogle);
+    area.append(btn);
+  }
+}
+
+async function loginGoogle() {
+  if (!SB) return toast("Login indisponível: Supabase não configurado.");
+  const { error } = await SB.auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: location.origin + location.pathname },
+  });
+  if (error) toast("O login do Google ainda não está ativado no Supabase.");
+}
+
+function prefillFromUser() {
+  if (!currentUser) return;
+  const meta = currentUser.user_metadata || {};
+  const name = (meta.full_name || meta.name || "").trim();
+  const nick = $("#pNick");
+  if (nick && !nick.value && name) nick.value = name.split(" ")[0];
+}
+
+async function initAuth() {
+  const area = $("#authArea");
+  if (!SB) { if (area) area.classList.add("hide"); return; }
+  try {
+    const { data } = await SB.auth.getSession();
+    currentUser = data.session?.user || null;
+  } catch {}
+  renderAuth();
+  prefillFromUser();
+  SB.auth.onAuthStateChange((_e, session) => {
+    const was = currentUser;
+    currentUser = session?.user || null;
+    renderAuth();
+    prefillFromUser();
+    if (currentUser && !was) toast(`Bem-vindo, ${(currentUser.user_metadata?.name || "aventureiro").split(" ")[0]}! ⚔️`);
+  });
+}
+
+/* ============================================================
    BOOT
    ============================================================ */
 document.addEventListener("DOMContentLoaded", () => {
   route();
   npcSay(0);
   $("#npcNext").addEventListener("click", () => npcSay(++npcIdx));
-  $("#tabTwitch").addEventListener("click", () => mountStream("twitch"));
-  $("#tabYoutube").addEventListener("click", () => mountStream("youtube"));
-  mountStream("twitch");
+  mountYouTube();
+  $("#toggleChat").addEventListener("click", () => mountChat(false));
   checkLive();
-  setInterval(checkLive, 120000);
+  setInterval(checkLive, 5 * 60 * 1000);
+  initAuth();
   tickCountdown();
   setInterval(tickCountdown, 1000);
   renderHomeNews();

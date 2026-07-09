@@ -10,12 +10,17 @@
 
 const CANAL = {
   nome: "Bihelz TV",
-  twitch: "bihelztv",
   youtube: "@bihelzs",
-  youtubeChannelId: "UCDr0kxeySD8NlVFpkI5W1Pw", // canal "bihelz tv" — lives acontecem aqui
+  youtubeChannelId: "UCDr0kxeySD8NlVFpkI5W1Pw", // canal "bihelz tv" — as lives acontecem aqui
   instagram: "@bihelztv",
   discordConvite: "https://discord.gg/w36y82XZp",
   discordNome: "Laboranok do Ragnatório",
+  // Chave da YouTube Data API v3 (pública, restrinja por referrer no Google Cloud).
+  // Com ela o site detecta quando o Bihelz está ao vivo e embeda o chat real da
+  // live (os usuários interagem com a própria conta do YouTube). Vazia = só o
+  // player + botão "abrir no YouTube". Como pegar: Google Cloud → APIs → ativar
+  // "YouTube Data API v3" → Credentials → API key.
+  youtubeApiKey: "",
 };
 
 /* ---- NOTÍCIAS (atualizadas diariamente) ------------------- */
@@ -373,7 +378,7 @@ const SEED_PARTY = [
     nivel: "200",
     objetivo: "MVP",
     horario: "Hoje, 21h (durante a live)",
-    contato: "twitch.tv/bihelztv",
+    contato: "youtube.com/@bihelzs (chat da live)",
     desc: "Caçada de MVP com a galera da live! Traz teu buffer que a gente divide o loot no sorteio.",
     ts: 1751990400000,
   },
@@ -408,7 +413,7 @@ const SEED_TRADE = [
     item: "Poção Branca Especial (x100)",
     detalhe: "Brew fresco do Laboranok, feito com carinho científico",
     preco: 900000,
-    contato: "twitch.tv/bihelztv (chat da live)",
+    contato: "youtube.com/@bihelzs (chat da live)",
     ts: 1751990400000,
   },
   {

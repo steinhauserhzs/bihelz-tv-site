@@ -4,11 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Bihelz TV — Laboranok do Ragnatório · Comunidade Ragnarok LATAM</title>
-<meta name="description" content="O QG da comunidade Bihelz TV: notícias diárias do Ragnarok Online LATAM, lives na Twitch e YouTube, party finder, trade, timer de MVP, Lab do Cientista com calculadora de Farmacologia Especial, tabela elemental e arsenal de ferramentas.">
+<meta name="description" content="O QG da comunidade Bihelz TV: notícias diárias do Ragnarok Online LATAM, lives no YouTube com chat, party finder, trade, timer de MVP, Lab do Cientista com calculadora de Farmacologia, tabela elemental e arsenal de ferramentas.">
 <meta property="og:title" content="Bihelz TV — Laboranok do Ragnatório">
 <meta property="og:description" content="Notícias diárias, lives, party finder, trade, timer de MVP e o Lab do Cientista — a comunidade Ragnarok LATAM do Bihelz.">
-<meta property="og:image" content="assets/img/mascot-cientista.jpg">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cellipse cx='32' cy='38' rx='26' ry='22' fill='%23ff5fa2'/%3E%3Cellipse cx='24' cy='32' rx='9' ry='11' fill='%23ffd0e6' opacity='.55'/%3E%3Ccircle cx='24' cy='38' r='3' fill='%23421030'/%3E%3Ccircle cx='40' cy='38' r='3' fill='%23421030'/%3E%3Cpath d='M28 46 q4 3 8 0' stroke='%23421030' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta property="og:image" content="assets/img/logo-bihelz.png">
+<link rel="icon" type="image/png" href="assets/img/favicon-64.png">
+<link rel="apple-touch-icon" href="assets/img/favicon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;700&family=Poppins:wght@400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
@@ -21,21 +22,8 @@
 <header class="topbar">
   <div class="topbar__inner">
     <a class="brand" href="#home">
-      <svg class="brand__logo" viewBox="0 0 64 64" aria-hidden="true">
-        <defs>
-          <radialGradient id="pg" cx="40%" cy="30%" r="80%">
-            <stop offset="0%" stop-color="#ffd0e6"/><stop offset="55%" stop-color="#ff5fa2"/><stop offset="100%" stop-color="#c5276f"/>
-          </radialGradient>
-        </defs>
-        <ellipse cx="32" cy="38" rx="26" ry="22" fill="url(#pg)"/>
-        <ellipse cx="23" cy="31" rx="9" ry="10" fill="#ffd0e6" opacity=".5"/>
-        <circle cx="24" cy="38" r="3" fill="#421030"/><circle cx="40" cy="38" r="3" fill="#421030"/>
-        <path d="M28 46 q4 3.5 8 0" stroke="#421030" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-      </svg>
-      <span>
-        <span class="brand__name">BIHELZ TV</span><br>
-        <span class="brand__lv">LV.99 · RAGNAROK LATAM</span>
-      </span>
+      <img class="brand__wordmark" src="assets/img/logo-bihelz.png" alt="BIHELZ" width="150" height="52">
+      <span class="brand__lv">RAGNAROK LATAM · LV.99</span>
     </a>
     <nav class="topnav" aria-label="Navegação principal">
       <a href="#home" data-nav>Início</a>
@@ -48,9 +36,10 @@
       <a href="#guias" data-nav>Guias</a>
       <a href="#comunidade" data-nav>Guilda</a>
     </nav>
-    <a class="live-badge" id="liveBadge" href="https://twitch.tv/bihelztv" target="_blank" rel="noopener">
-      <span class="dot"></span><span id="liveText">OFFLINE</span>
+    <a class="live-badge" id="liveBadge" href="https://www.youtube.com/@bihelzs/live" target="_blank" rel="noopener">
+      <span class="dot"></span><span id="liveText">YOUTUBE</span>
     </a>
+    <div id="authArea" class="auth-area"></div>
   </div>
 </header>
 
@@ -68,9 +57,9 @@
           <h1>Laboranok do Ragnatório</h1>
           <p>O QG oficial da guilda: notícias diárias, lives, grupo pra jogar junto, trade, timers de MVP e o Lab do Cientista — porque aqui a gente upa na base da ciência. 🧪</p>
           <div class="cta">
-            <a class="ro-btn" href="https://twitch.tv/bihelztv" target="_blank" rel="noopener">📺 Twitch</a>
             <a class="ro-btn ro-btn--danger" href="https://www.youtube.com/@bihelzs" target="_blank" rel="noopener">▶️ YouTube</a>
             <a class="ro-btn ro-btn--sp" href="https://discord.gg/w36y82XZp" target="_blank" rel="noopener">💬 Discord</a>
+            <a class="ro-btn ro-btn--ghost" href="https://instagram.com/bihelztv" target="_blank" rel="noopener">📸 Instagram</a>
           </div>
         </div>
       </div>
@@ -86,14 +75,15 @@
 
     <div class="grid grid--hero">
       <div class="ro-window tilt">
-        <div class="ro-window__title">Transmissão ao vivo<span class="ro-window__x">✕</span></div>
+        <div class="ro-window__title">▶️ Live no YouTube<span class="ro-window__x">✕</span></div>
         <div class="ro-window__body">
-          <div class="stream-tabs" role="tablist">
-            <button type="button" id="tabTwitch" class="active">📺 Twitch</button>
-            <button type="button" id="tabYoutube">▶️ YouTube</button>
-          </div>
           <div id="streamBox"></div>
-          <p class="muted mt8" style="font-size:12px" id="streamHint">As lives rolam na Twitch e no YouTube — escolhe teu reino.</p>
+          <div id="liveChatBox" class="hide"></div>
+          <div class="row mt12">
+            <button class="ro-btn ro-btn--small ro-btn--danger" id="toggleChat" type="button">💬 Chat da live</button>
+            <a class="ro-btn ro-btn--small ro-btn--ghost" href="https://www.youtube.com/@bihelzs/live" target="_blank" rel="noopener">Abrir no YouTube ↗</a>
+          </div>
+          <p class="muted mt8" style="font-size:12px" id="streamHint">As lives do Bihelz rolam no YouTube. Ative o chat pra conversar durante a transmissão.</p>
         </div>
       </div>
 
@@ -214,7 +204,7 @@
               </select>
             </div>
             <div class="ro-field"><label for="pHorario">Horário</label><input class="ro-input" id="pHorario" required maxlength="60" placeholder="Ex.: Hoje 21h / fins de semana"></div>
-            <div class="ro-field"><label for="pContato">Contato (Discord, Twitch...)</label><input class="ro-input" id="pContato" required maxlength="60" placeholder="Ex.: meunick#0000"></div>
+            <div class="ro-field"><label for="pContato">Contato (Discord, YouTube...)</label><input class="ro-input" id="pContato" required maxlength="60" placeholder="Ex.: meunick#0000"></div>
             <div class="ro-field"><label for="pDesc">Mensagem</label><textarea class="ro-textarea" id="pDesc" maxlength="200" placeholder="Conta o que você procura..."></textarea></div>
             <button class="ro-btn" type="submit">⚔️ Publicar anúncio</button>
           </form>
@@ -392,16 +382,10 @@
     <p class="section-sub">Siga o Bihelz em todo canto e vem fazer parte do <b>Laboranok do Ragnatório</b> — a comunidade mais científica do Ragnarok LATAM.</p>
 
     <div class="grid grid--2">
-      <a class="soc-card" href="https://twitch.tv/bihelztv" target="_blank" rel="noopener" style="text-decoration:none">
-        <div class="ro-window tilt" style="width:100%"><div class="ro-window__body row">
-          <div class="ro-slot">📺</div>
-          <div><div class="net">Twitch</div><div class="handle">/bihelztv</div></div>
-        </div></div>
-      </a>
       <a class="soc-card" href="https://www.youtube.com/@bihelzs" target="_blank" rel="noopener" style="text-decoration:none">
         <div class="ro-window tilt" style="width:100%"><div class="ro-window__body row">
           <div class="img-slot"><img src="assets/img/icon-live.jpg" alt=""></div>
-          <div><div class="net">YouTube — lives também!</div><div class="handle">@bihelzs</div></div>
+          <div><div class="net">YouTube — é aqui que rola live!</div><div class="handle">@bihelzs</div></div>
         </div></div>
       </a>
       <a class="soc-card" href="https://instagram.com/bihelztv" target="_blank" rel="noopener" style="text-decoration:none">
@@ -426,7 +410,7 @@
             <thead><tr><th>Dia</th><th>Hora</th><th>Missão</th></tr></thead>
             <tbody></tbody>
           </table>
-          <p class="muted" style="font-size:12px;margin-top:10px">* Horários podem mudar — confirme na Twitch ou no YouTube.</p>
+          <p class="muted" style="font-size:12px;margin-top:10px">* Horários podem mudar — confirme no YouTube.</p>
         </div>
       </div>
       <div class="ro-window">

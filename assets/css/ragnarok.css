@@ -468,7 +468,7 @@ a{color:inherit}
 .countdown .num{font-family:var(--f-hud);font-weight:700;font-size:26px;color:var(--bz-gold);text-shadow:0 0 10px rgba(255,194,75,.5)}
 .countdown .u{font-family:var(--f-hud);font-size:10px;letter-spacing:2px;color:var(--bz-lilac);text-transform:uppercase}
 
-/* Embed da Twitch */
+/* Player do YouTube */
 .stream-frame{
   aspect-ratio:16/9;width:100%;border:0;border-radius:8px;
   background:#0a0512;
