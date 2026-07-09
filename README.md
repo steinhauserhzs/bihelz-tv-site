@@ -4,12 +4,13 @@
 
 ### O QG da comunidade de Ragnarok Online LATAM do streamer **Bihelz TV**
 
-**[▶️ ABRIR O SITE](https://bihelz-tv-site.vercel.app)** · [Twitch](https://twitch.tv/bihelztv) · [YouTube](https://www.youtube.com/@bihelzs) · [Discord](https://discord.gg/w36y82XZp)
+**[▶️ ABRIR O SITE](https://bihelztv.vercel.app)** · [YouTube](https://www.youtube.com/@bihelzs) · [Discord](https://discord.gg/w36y82XZp) · [Instagram](https://instagram.com/bihelztv)
 
 ![Tema](https://img.shields.io/badge/tema-Ragnarok%20Online-9d4edd?style=for-the-badge)
 ![Zero deps](https://img.shields.io/badge/build-nenhum-4ecdc4?style=for-the-badge)
 ![Mobile](https://img.shields.io/badge/mobile-first-ffc24b?style=for-the-badge)
-![Supabase](https://img.shields.io/badge/quadros-Supabase-3ecf8e?style=for-the-badge)
+![Supabase](https://img.shields.io/badge/quadros%20%2B%20login-Supabase-3ecf8e?style=for-the-badge)
+![YouTube](https://img.shields.io/badge/live%20%2B%20chat-YouTube-ff0000?style=for-the-badge)
 ![PT-BR](https://img.shields.io/badge/idioma-PT--BR-ff5fa2?style=for-the-badge)
 
 *Feito com ❤️ pela comunidade. Site de fãs, não oficial. Arte 100% original gerada com IA.*
@@ -26,7 +27,7 @@ Um site de comunidade **todo tematizado na UI clássica do Ragnarok Online** (ja
 
 | | Ferramenta |
 |---|---|
-| 🏰 **Início** | Player Twitch **e** YouTube (abas), status ao vivo, countdown do Stars LATAM, hero com parallax |
+| 🏰 **Início** | Player do **YouTube** + detecção de live e **chat da live** embutido, countdown do Stars LATAM, hero com parallax, **login com Google** |
 | 📜 **Notícias** | Curadoria diária + **Radar ao vivo** (myROverse via REST/CORS) com filtros |
 | 🤝 **Party** | Party finder — publique classe/nível/objetivo, quadro **compartilhado** (Supabase) |
 | 💰 **Trade** | Quadro de vendo/compro em zeny, **compartilhado** (Supabase) |
@@ -54,6 +55,13 @@ Party e Trade viram **globais** (todos os visitantes veem os mesmos anúncios) q
 O schema (tabelas + RLS anti-griefing + RPC de deleção por token de dono) está em
 [`supabase/migrations/0001_community_boards.sql`](supabase/migrations/0001_community_boards.sql).
 **Nunca** coloque a senha do Postgres nem a `service_role` key no frontend.
+
+## 🔑 Login Google + ▶️ chat da live do YouTube
+
+Duas integrações que dependem de credenciais do Google (você cria em ~5 min cada).
+O frontend já está pronto — é só colar as credenciais. Passo a passo em
+**[SETUP.md](SETUP.md)**. Sem elas, o site funciona normalmente (login oculto, e a
+live mostra o player + botão "abrir no YouTube").
 
 ## 📰 Conteúdo diário
 
