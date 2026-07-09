@@ -205,20 +205,48 @@
 .disc-avatars{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;padding-top:12px;border-top:1px dashed var(--ro-frame)}
 .disc-av{width:34px;height:34px;border-radius:50%;border:2px solid #5865F2;object-fit:cover;background:#241047}
 
-/* ---------- Blog da comunidade ---------- */
-.blog-card .ro-window__body{padding:16px 18px}
-.blog-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.blog-av{width:40px;height:40px;flex:0 0 40px;border-radius:50%;object-fit:cover;border:2px solid var(--bz-gold);background:#241047}
-.blog-av--ph{display:grid;place-items:center;font-size:20px}
-.blog-author{font-family:var(--f-serif);font-weight:700;font-size:15px;color:var(--ro-ink)}
-.blog-date{font-family:var(--f-hud);font-weight:600;font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:var(--ro-ink-soft)}
-.blog-title{font-family:var(--f-serif);font-size:19px;line-height:1.25;margin-bottom:8px;color:var(--ro-ink)}
-.blog-body{font-size:14.5px;line-height:1.6;color:var(--ro-ink);white-space:pre-wrap;word-break:break-word}
-.blog-actions{display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:12px;border-top:1px dashed var(--ro-frame)}
-.blog-like{display:inline-flex;align-items:center;gap:2px;cursor:pointer;background:var(--ro-parch-3);border:1.5px solid var(--ro-frame);border-radius:20px;padding:5px 12px;font-family:var(--f-hud);font-weight:700;font-size:13px;color:var(--ro-ink);transition:all .12s}
-.blog-like:hover{filter:brightness(1.04)}
-.blog-like.liked{background:#ffe3f0;border-color:#e08bb4;color:#a41f5c}
-.blog-like__n{font-variant-numeric:tabular-nums}
+/* ---------- Blog / Fórum estilo Reddit ---------- */
+.blog-controls{display:flex;flex-direction:column;gap:2px}
+.blog-imgpick{display:flex;gap:8px;align-items:center}
+.blog-preview{margin-top:4px}
+.blog-preview img{max-width:100%;max-height:260px;border-radius:8px;border:2px solid var(--ro-frame);display:block}
+.blog-preview__rm{margin-top:6px;background:none;border:none;cursor:pointer;color:var(--danger);font-family:var(--f-hud);font-weight:700;font-size:12px}
+
+.post-reddit .ro-window__body{padding:0}
+.rd-wrap{display:flex;align-items:stretch}
+.rd-vote{display:flex;flex-direction:column;align-items:center;gap:3px;padding:12px 10px;background:linear-gradient(180deg,rgba(157,78,221,.10),rgba(157,78,221,.03));border-right:1px solid var(--ro-frame);border-radius:8px 0 0 8px;min-width:52px}
+.rd-up{background:none;border:none;cursor:pointer;font-size:18px;line-height:1;color:var(--ro-ink-soft);transition:.12s;padding:2px}
+.rd-up:hover{color:var(--bz-purple-bright);transform:translateY(-1px)}
+.rd-up.on{color:#ff5722}
+.rd-score{font-family:var(--f-hud);font-weight:700;font-size:15px;color:var(--ro-ink);font-variant-numeric:tabular-nums}
+.rd-main{flex:1;min-width:0;padding:12px 16px}
+.rd-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.rd-flair{font-family:var(--f-hud);font-weight:700;font-size:10px;letter-spacing:.5px;text-transform:uppercase;padding:2px 9px;border-radius:20px;color:#fff}
+.fl-build{background:#7b2fd6}.fl-print{background:#c98a12}.fl-duvida{background:#1c6fb5}.fl-disc{background:#1d8a4e}
+.fl-pvp{background:#c0392b}.fl-trade{background:#b8860b}.fl-guia{background:#5f1ba8}.fl-outro{background:#6b6b6b}
+.rd-sub{font-family:var(--f-hud);font-weight:600;font-size:11.5px;letter-spacing:.3px;color:var(--ro-ink-soft)}
+.rd-title{font-family:var(--f-serif);font-size:18px;line-height:1.28;color:var(--ro-ink);margin-bottom:8px}
+.rd-img{max-width:100%;max-height:460px;border-radius:8px;border:1.5px solid var(--ro-frame);display:block;margin-bottom:8px}
+.rd-body{font-size:14.5px;line-height:1.6;color:var(--ro-ink);white-space:pre-wrap;word-break:break-word}
+.rd-foot{display:flex;align-items:center;gap:14px;margin-top:12px}
+.rd-cbtn{background:none;border:none;cursor:pointer;font-family:var(--f-hud);font-weight:700;font-size:12.5px;letter-spacing:.3px;color:var(--ro-ink-soft);padding:4px 6px;border-radius:6px;transition:.12s}
+.rd-cbtn:hover{background:var(--ro-parch-3);color:var(--ro-ink)}
+.rd-del{background:none;border:none;cursor:pointer;font-family:var(--f-hud);font-weight:700;font-size:12px;color:var(--danger);opacity:.8}
+.rd-del:hover{opacity:1}
+
+/* comentários */
+.rd-comments{margin-top:12px;padding-top:12px;border-top:1px dashed var(--ro-frame);display:flex;flex-direction:column;gap:12px}
+.rd-comment{padding-left:10px;border-left:3px solid rgba(157,78,221,.3)}
+.rd-c-head{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ro-ink);margin-bottom:3px}
+.rd-c-av{width:22px;height:22px;flex:0 0 22px;border-radius:50%;object-fit:cover;border:1.5px solid var(--bz-gold)}
+.rd-c-av--ph{display:grid;place-items:center;font-size:12px;background:#241047}
+.rd-c-time{color:var(--ro-ink-soft);font-family:var(--f-hud);font-weight:600;font-size:11px}
+.rd-c-del{margin-left:auto;background:none;border:none;cursor:pointer;color:var(--danger);font-size:12px;opacity:.7}
+.rd-c-del:hover{opacity:1}
+.rd-c-body{font-size:13.5px;line-height:1.5;color:var(--ro-ink);white-space:pre-wrap;word-break:break-word}
+.rd-c-form{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.rd-c-form .ro-textarea{width:100%}
+.rd-c-gate{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px}
 
 /* ---------- Grids de Database / Nostalgia ---------- */
 .db-grid{display:grid;gap:12px;grid-template-columns:1fr}

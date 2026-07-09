@@ -1113,10 +1113,35 @@ function renderSchedule() {
 }
 
 /* ============================================================
-   BLOG DA COMUNIDADE (Supabase, publicar só logado)
+   BLOG DA COMUNIDADE — estilo Reddit (Supabase)
+   Flairs (Build/Print/Dúvida/...), upvote + ordenação, upload de
+   print (Supabase Storage), comentários. Ler é público; postar,
+   votar e comentar exige login Google (RLS no servidor).
    ============================================================ */
 const blogLiked = new Set();
+let blogSort = "novos", blogFlairFilter = "todos";
+let pendingImage = null;
 
+const BLOG_FLAIRS = [
+  { key: "build", label: "Build", emoji: "⚔️", cls: "fl-build" },
+  { key: "print", label: "Print/Conquista", emoji: "📸", cls: "fl-print" },
+  { key: "duvida", label: "Dúvida", emoji: "❓", cls: "fl-duvida" },
+  { key: "discussao", label: "Discussão", emoji: "💬", cls: "fl-disc" },
+  { key: "pvp", label: "PvP/WoE", emoji: "🛡️", cls: "fl-pvp" },
+  { key: "trade", label: "Trade", emoji: "💰", cls: "fl-trade" },
+  { key: "guia", label: "Guia", emoji: "📖", cls: "fl-guia" },
+  { key: "outro", label: "Outro", emoji: "✨", cls: "fl-outro" },
+];
+const flairOf = (k) => BLOG_FLAIRS.find((f) => f.key === k) || BLOG_FLAIRS[BLOG_FLAIRS.length - 1];
+
+function timeago(iso) {
+  const s = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000);
+  if (s < 60) return "agora";
+  if (s < 3600) return `há ${Math.floor(s / 60)}min`;
+  if (s < 86400) return `há ${Math.floor(s / 3600)}h`;
+  if (s < 2592000) return `há ${Math.floor(s / 86400)}d`;
+  return new Date(iso).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" });
+}
 function blogAuthorName() {
   const m = (currentUser && currentUser.user_metadata) || {};
   return (m.full_name || m.name || (currentUser && currentUser.email) || "Aventureiro");
@@ -1124,16 +1149,47 @@ function blogAuthorName() {
 
 async function loadBlog() {
   renderBlogCompose();
+  renderBlogControls();
   const list = $("#blogList");
   if (!list) return;
   if (!SB) return setContent(list, emptyState("🔒", "O blog precisa do Supabase configurado."));
-  const { data, error } = await SB.from("blog_posts").select("*").order("created_at", { ascending: false }).limit(60);
+  let q = SB.from("blog_posts").select("*");
+  q = blogSort === "top" ? q.order("likes", { ascending: false }).order("created_at", { ascending: false })
+                         : q.order("created_at", { ascending: false });
+  if (blogFlairFilter !== "todos") q = q.eq("flair", blogFlairFilter);
+  const { data, error } = await q.limit(60);
   if (error) return setContent(list, emptyState("😕", "Não consegui carregar o blog agora."));
   blogLiked.clear();
   if (currentUser) {
     try { const { data: likes } = await SB.from("blog_likes").select("post_id"); (likes || []).forEach((l) => blogLiked.add(l.post_id)); } catch {}
   }
   renderBlogList(data || []);
+}
+
+function renderBlogControls() {
+  const box = $("#blogControls");
+  if (!box) return;
+  const wrap = el("div", "blog-controls");
+  // sort
+  const sorts = [["novos", "🆕 Recentes"], ["top", "🔥 Mais votados"]];
+  const sortRow = el("div", "row");
+  sorts.forEach(([k, lbl]) => {
+    const b = el("button", "ro-chip ro-chip--btn" + (blogSort === k ? " active" : ""), lbl); b.type = "button";
+    b.addEventListener("click", () => { blogSort = k; loadBlog(); });
+    sortRow.append(b);
+  });
+  // flair filter
+  const filterRow = el("div", "row"); filterRow.style.marginTop = "8px";
+  const all = el("button", "ro-chip ro-chip--btn" + (blogFlairFilter === "todos" ? " active" : ""), "Tudo"); all.type = "button";
+  all.addEventListener("click", () => { blogFlairFilter = "todos"; loadBlog(); });
+  filterRow.append(all);
+  BLOG_FLAIRS.forEach((f) => {
+    const b = el("button", "ro-chip ro-chip--btn" + (blogFlairFilter === f.key ? " active" : ""), `${f.emoji} ${f.label}`); b.type = "button";
+    b.addEventListener("click", () => { blogFlairFilter = f.key; loadBlog(); });
+    filterRow.append(b);
+  });
+  wrap.append(sortRow, filterRow);
+  box.replaceChildren(wrap);
 }
 
 function renderBlogCompose() {
@@ -1143,83 +1199,195 @@ function renderBlogCompose() {
   if (!currentUser) {
     const win = el("div", "ro-window");
     const body = el("div", "ro-window__body center");
-    body.append(el("p", "muted", "Entre com sua conta Google pra escrever no blog da guilda."));
+    body.append(el("p", "muted", "Entre com sua conta Google pra criar post, votar e comentar no fórum da guilda."));
     const b = el("button", "btn-google", null); b.type = "button"; b.style.marginTop = "12px";
     b.append(el("span", "g", "G"), el("span", null, "Entrar com Google"));
     b.addEventListener("click", loginGoogle);
     body.append(b); win.append(body); box.replaceChildren(win);
     return;
   }
+  pendingImage = null;
   const win = el("div", "ro-window");
-  const t = el("div", "ro-window__title", "✍️ Escrever post");
+  const t = el("div", "ro-window__title", "✍️ Criar post");
   const body = el("div", "ro-window__body stack"); body.style.gap = "10px";
+
+  const flairWrap = el("div", "ro-field");
+  flairWrap.append(el("label", null, "Categoria"));
+  const flairSel = el("select", "ro-select");
+  BLOG_FLAIRS.forEach((f) => { const o = el("option", null, `${f.emoji} ${f.label}`); o.value = f.key; flairSel.append(o); });
+  flairWrap.append(flairSel);
+
   const titleI = el("input", "ro-input"); titleI.placeholder = "Título do post"; titleI.maxLength = 120;
-  const bodyI = el("textarea", "ro-textarea"); bodyI.placeholder = "Escreve teu guia, relato, dica, teoria..."; bodyI.maxLength = 8000; bodyI.style.minHeight = "120px";
+  const bodyI = el("textarea", "ro-textarea"); bodyI.placeholder = "Escreve teu texto... (build, dúvida, relato, print de conquista)"; bodyI.maxLength = 8000; bodyI.style.minHeight = "110px";
+
+  // imagem
+  const imgWrap = el("div", "blog-imgpick");
+  const fileBtn = el("label", "ro-btn ro-btn--small ro-btn--ghost", "📸 Anexar print");
+  const file = document.createElement("input"); file.type = "file"; file.accept = "image/png,image/jpeg,image/webp,image/gif"; file.style.display = "none";
+  const preview = el("div", "blog-preview hide");
+  file.addEventListener("change", () => {
+    const f = file.files && file.files[0];
+    if (!f) return;
+    if (f.size > 5 * 1024 * 1024) { toast("Imagem muito grande (máx 5MB)."); file.value = ""; return; }
+    pendingImage = f;
+    const url = URL.createObjectURL(f);
+    const im = document.createElement("img"); im.src = url; im.alt = "";
+    const rm = el("button", "blog-preview__rm", "✕ remover print"); rm.type = "button";
+    rm.addEventListener("click", () => { pendingImage = null; file.value = ""; preview.classList.add("hide"); preview.replaceChildren(); });
+    preview.replaceChildren(im, rm); preview.classList.remove("hide");
+  });
+  fileBtn.append(file);
+  imgWrap.append(fileBtn);
+
   const btn = el("button", "ro-btn", "📢 Publicar"); btn.type = "button";
   btn.addEventListener("click", async () => {
     const title = titleI.value.trim(), b = bodyI.value.trim();
-    if (title.length < 3 || !b) return toast("Escreve um título (3+) e um texto.");
-    btn.disabled = true;
+    if (title.length < 3) return toast("Escreve um título (mín. 3 letras).");
+    if (!b && !pendingImage) return toast("Escreve um texto ou anexa um print.");
+    btn.disabled = true; btn.textContent = "Publicando...";
+    let image_url = null;
+    if (pendingImage) {
+      const ext = (pendingImage.name.split(".").pop() || "png").toLowerCase().replace(/[^a-z0-9]/g, "");
+      const path = `${currentUser.id}/${Date.now()}.${ext}`;
+      const up = await SB.storage.from("blog-images").upload(path, pendingImage, { cacheControl: "3600", upsert: false });
+      if (up.error) { btn.disabled = false; btn.textContent = "📢 Publicar"; return toast("Falha no upload da imagem."); }
+      image_url = SB.storage.from("blog-images").getPublicUrl(path).data.publicUrl;
+    }
     const m = currentUser.user_metadata || {};
     const { error } = await SB.from("blog_posts").insert({
-      author_id: currentUser.id, author_name: blogAuthorName(),
-      author_avatar: m.avatar_url || null, title, body: b,
+      author_id: currentUser.id, author_name: blogAuthorName(), author_avatar: m.avatar_url || null,
+      flair: flairSel.value, title, body: b || "", image_url,
     });
-    btn.disabled = false;
+    btn.disabled = false; btn.textContent = "📢 Publicar";
     if (error) return toast("Não consegui publicar — tenta de novo.");
-    titleI.value = ""; bodyI.value = "";
-    toast("Post publicado pra guilda! 📢");
+    toast("Post publicado no fórum! 📢");
     loadBlog();
   });
-  body.append(el("div", "muted", "Publicando como " + blogAuthorName()), titleI, bodyI, btn);
+
+  body.append(el("div", "muted", "Postando como " + blogAuthorName()), flairWrap, titleI, bodyI, imgWrap, preview, btn);
   win.append(t, body); box.replaceChildren(win);
 }
 
 function renderBlogList(posts) {
   const box = $("#blogList");
-  if (!posts.length) return setContent(box, emptyState("📝", "Nenhum post ainda. Seja o primeiro a escrever pra guilda!"));
+  if (!posts.length) return setContent(box, emptyState("📝", "Nenhum post por aqui ainda. Seja o primeiro da guilda!"));
   setContent(box, ...posts.map(blogCard));
 }
 
 function blogCard(p) {
-  const art = el("article", "ro-window blog-card");
-  const body = el("div", "ro-window__body");
-  const head = el("div", "blog-head");
-  if (p.author_avatar) {
-    const img = document.createElement("img"); img.className = "blog-av"; img.src = p.author_avatar; img.alt = ""; img.referrerPolicy = "no-referrer"; img.loading = "lazy";
-    head.append(img);
-  } else head.append(el("div", "blog-av blog-av--ph", "🧪"));
-  const who = el("div");
-  who.append(el("div", "blog-author", p.author_name), el("div", "blog-date", new Date(p.created_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })));
-  head.append(who);
-  body.append(head, el("h3", "blog-title", p.title), el("p", "blog-body", p.body));
+  const art = el("article", "ro-window post-reddit");
+  const wrap = el("div", "rd-wrap");
 
-  const actions = el("div", "blog-actions");
+  const vote = el("div", "rd-vote");
   const liked = blogLiked.has(p.id);
-  const like = el("button", "blog-like" + (liked ? " liked" : ""), null); like.type = "button";
-  like.append(document.createTextNode((liked ? "❤️" : "🤍") + " "), el("span", "blog-like__n", String(p.likes || 0)));
-  like.addEventListener("click", async () => {
-    if (!currentUser) return toast("Entre com Google pra curtir.");
+  const up = el("button", "rd-up" + (liked ? " on" : ""), "▲"); up.type = "button"; up.title = "Upvote";
+  const score = el("div", "rd-score", String(p.likes || 0));
+  up.addEventListener("click", async () => {
+    if (!currentUser) return toast("Entre com Google pra votar.");
     const { data, error } = await SB.rpc("toggle_blog_like", { p_post: p.id });
-    if (error) return toast("Não consegui curtir agora.");
+    if (error) return toast("Não consegui votar agora.");
     if (blogLiked.has(p.id)) blogLiked.delete(p.id); else blogLiked.add(p.id);
-    const nl = blogLiked.has(p.id);
-    like.className = "blog-like" + (nl ? " liked" : "");
-    like.replaceChildren(document.createTextNode((nl ? "❤️" : "🤍") + " "), el("span", "blog-like__n", String(data)));
+    up.className = "rd-up" + (blogLiked.has(p.id) ? " on" : "");
+    score.textContent = String(data);
   });
-  actions.append(like);
+  vote.append(up, score);
+
+  const main = el("div", "rd-main");
+  const fl = flairOf(p.flair);
+  const meta = el("div", "rd-meta");
+  meta.append(el("span", "rd-flair " + fl.cls, `${fl.emoji} ${fl.label}`));
+  meta.append(el("span", "rd-sub", `${p.author_name} · ${timeago(p.created_at)}`));
+  main.append(meta, el("h3", "rd-title", p.title));
+  if (p.image_url) {
+    const im = document.createElement("img");
+    im.className = "rd-img"; im.src = p.image_url; im.alt = ""; im.loading = "lazy";
+    const a = document.createElement("a"); a.href = p.image_url; a.target = "_blank"; a.rel = "noopener"; a.append(im);
+    main.append(a);
+  }
+  if (p.body) main.append(el("p", "rd-body", p.body));
+
+  const foot = el("div", "rd-foot");
+  const cbox = el("div", "rd-comments hide");
+  const cbtn = el("button", "rd-cbtn", `💬 ${p.comment_count || 0} coment.`); cbtn.type = "button";
+  cbtn.addEventListener("click", () => {
+    if (cbox.classList.contains("hide")) { cbox.classList.remove("hide"); loadComments(p, cbox, cbtn); }
+    else cbox.classList.add("hide");
+  });
+  foot.append(cbtn);
   if (currentUser && (currentUser.id === p.author_id || isAdmin)) {
-    const del = el("button", "ro-btn ro-btn--small ro-btn--danger", "✕ Apagar"); del.type = "button";
+    const del = el("button", "rd-del", "✕ apagar"); del.type = "button";
     del.addEventListener("click", async () => {
       const { error } = await SB.from("blog_posts").delete().eq("id", p.id);
       if (error) return toast("Falha ao apagar.");
       toast("Post apagado."); loadBlog();
     });
-    actions.append(del);
+    foot.append(del);
   }
-  body.append(actions);
-  art.append(body);
+  main.append(foot, cbox);
+  wrap.append(vote, main); art.append(wrap);
   return art;
+}
+
+async function loadComments(p, box, cbtn) {
+  box.replaceChildren(el("div", "muted", "Carregando comentários..."));
+  const { data, error } = await SB.from("blog_comments").select("*").eq("post_id", p.id).order("created_at", { ascending: true }).limit(300);
+  if (error) return box.replaceChildren(el("div", "muted", "Não consegui carregar."));
+  const nodes = (data || []).map((c) => commentNode(c, p, box, cbtn));
+  const form = commentForm(p, box, cbtn);
+  box.replaceChildren(...(nodes.length ? nodes : [el("div", "muted", "Sem comentários. Puxa o papo!")]), form);
+}
+
+function commentNode(c, p, box, cbtn) {
+  const row = el("div", "rd-comment");
+  const head = el("div", "rd-c-head");
+  if (c.author_avatar) { const img = document.createElement("img"); img.className = "rd-c-av"; img.src = c.author_avatar; img.referrerPolicy = "no-referrer"; img.alt = ""; head.append(img); }
+  else head.append(el("span", "rd-c-av rd-c-av--ph", "🧪"));
+  head.append(el("b", null, c.author_name), el("span", "rd-c-time", " · " + timeago(c.created_at)));
+  if (currentUser && (currentUser.id === c.author_id || isAdmin)) {
+    const del = el("button", "rd-c-del", "✕"); del.type = "button"; del.title = "Apagar";
+    del.addEventListener("click", async () => {
+      const { error } = await SB.from("blog_comments").delete().eq("id", c.id);
+      if (error) return toast("Falha ao apagar.");
+      p.comment_count = Math.max(0, (p.comment_count || 1) - 1);
+      if (cbtn) cbtn.textContent = `💬 ${p.comment_count} coment.`;
+      loadComments(p, box, cbtn);
+    });
+    head.append(del);
+  }
+  row.append(head, el("div", "rd-c-body", c.body));
+  return row;
+}
+
+function commentForm(p, box, cbtn) {
+  if (!currentUser) {
+    const g = el("div", "rd-c-gate");
+    g.append(el("span", "muted", "Entre com Google pra comentar. "));
+    const b = el("button", "btn-google", null); b.type = "button";
+    b.append(el("span", "g", "G"), el("span", null, "Entrar"));
+    b.addEventListener("click", loginGoogle);
+    g.append(b);
+    return g;
+  }
+  const form = el("div", "rd-c-form");
+  const ta = el("textarea", "ro-textarea"); ta.placeholder = "Responder / comentar..."; ta.maxLength = 3000; ta.style.minHeight = "60px";
+  const btn = el("button", "ro-btn ro-btn--small", "Comentar"); btn.type = "button";
+  btn.addEventListener("click", async () => {
+    const body = ta.value.trim();
+    if (!body) return;
+    btn.disabled = true;
+    const m = currentUser.user_metadata || {};
+    const { error } = await SB.from("blog_comments").insert({
+      post_id: p.id, author_id: currentUser.id, author_name: blogAuthorName(), author_avatar: m.avatar_url || null, body,
+    });
+    btn.disabled = false;
+    if (error) return toast("Não consegui comentar.");
+    ta.value = "";
+    p.comment_count = (p.comment_count || 0) + 1;
+    if (cbtn) cbtn.textContent = `💬 ${p.comment_count} coment.`;
+    loadComments(p, box, cbtn);
+  });
+  form.append(ta, btn);
+  return form;
 }
 
 /* ============================================================
