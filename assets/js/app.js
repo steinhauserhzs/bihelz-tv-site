@@ -1112,6 +1112,77 @@ function renderSchedule() {
 }
 
 /* ============================================================
+   DISCORD — card ao vivo (membros + online), via API pública
+   Contagem: /invites/{code}?with_counts=true (CORS liberado).
+   Lista de online (avatares): widget.json — só aparece se o
+   widget estiver ativado em Config. do Servidor → Widget.
+   ============================================================ */
+function discordLogo() {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("viewBox", "0 -28.5 256 256");
+  svg.setAttribute("class", "disc-logo");
+  const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  p.setAttribute("fill", "#5865F2");
+  p.setAttribute("d", "M216.856 16.597A208.502 208.502 0 0 0 164.042 0c-2.275 4.113-4.933 9.645-6.766 14.046-19.692-2.961-39.203-2.961-58.533 0-1.832-4.4-4.55-9.933-6.846-14.046a207.809 207.809 0 0 0-52.855 16.638C5.618 67.147-3.443 116.4 1.087 164.956c22.169 16.555 43.653 26.612 64.775 33.193A161.094 161.094 0 0 0 79.735 175.3a136.413 136.413 0 0 1-21.846-10.632 108.636 108.636 0 0 0 5.356-4.237c42.122 19.702 87.89 19.702 129.51 0a131.66 131.66 0 0 0 5.355 4.237 136.07 136.07 0 0 1-21.886 10.653c4.006 8.02 8.638 15.67 13.873 22.848 21.142-6.58 42.646-16.637 64.815-33.213 5.316-56.288-9.08-105.09-38.056-148.36ZM85.474 135.095c-12.645 0-23.015-11.805-23.015-26.18s10.149-26.2 23.015-26.2c12.867 0 23.236 11.804 23.015 26.2.02 14.375-10.148 26.18-23.015 26.18Zm85.051 0c-12.645 0-23.014-11.805-23.014-26.18s10.148-26.2 23.014-26.2c12.867 0 23.236 11.804 23.015 26.2 0 14.375-10.148 26.18-23.015 26.18Z");
+  svg.append(p);
+  return svg;
+}
+
+async function loadDiscord() {
+  const box = $("#discordWidget");
+  if (!box || typeof CANAL === "undefined" || !CANAL.discordInvite) return;
+  const info = { name: CANAL.discordNome, total: null, online: null };
+  let members = [];
+  try {
+    const r = await fetch(`https://discord.com/api/v10/invites/${CANAL.discordInvite}?with_counts=true`);
+    if (r.ok) { const d = await r.json(); info.total = d.approximate_member_count; info.online = d.approximate_presence_count; if (d.guild && d.guild.name) info.name = d.guild.name; }
+  } catch {}
+  try {
+    const r = await fetch(`https://discord.com/api/guilds/${CANAL.discordGuildId}/widget.json`);
+    if (r.ok) { const w = await r.json(); if (Array.isArray(w.members)) members = w.members.filter((m) => m.avatar_url).slice(0, 14); if (w.presence_count != null) info.online = w.presence_count; }
+  } catch {}
+  renderDiscord(info, members);
+}
+
+function renderDiscord(info, members) {
+  const box = $("#discordWidget");
+  const win = el("div", "ro-window disc-card");
+  const body = el("div", "ro-window__body");
+
+  const head = el("div", "disc-head");
+  head.append(discordLogo());
+  const meta = el("div", "disc-meta");
+  meta.append(el("div", "disc-name", info.name || "Laboranok do Ragnatório"));
+  const stats = el("div", "disc-stats");
+  if (info.online != null) {
+    const s = el("span", "disc-stat disc-stat--on");
+    s.append(el("span", "disc-dot"), document.createTextNode(` ${Number(info.online).toLocaleString("pt-BR")} online agora`));
+    stats.append(s);
+  }
+  if (info.total != null) stats.append(el("span", "disc-stat", `${Number(info.total).toLocaleString("pt-BR")} membros`));
+  if (!stats.childNodes.length) stats.append(el("span", "disc-stat", "Comunidade da guilda"));
+  meta.append(stats);
+  head.append(meta);
+  const join = el("a", "ro-btn disc-join", "Entrar no Discord");
+  join.href = CANAL.discordConvite; join.target = "_blank"; join.rel = "noopener";
+  head.append(join);
+  body.append(head);
+
+  if (members.length) {
+    const av = el("div", "disc-avatars");
+    members.forEach((m) => {
+      const i = document.createElement("img");
+      i.className = "disc-av"; i.src = m.avatar_url; i.alt = m.username || ""; i.title = m.username || "";
+      i.referrerPolicy = "no-referrer"; i.loading = "lazy";
+      av.append(i);
+    });
+    body.append(av);
+  }
+  win.append(body);
+  box.replaceChildren(win);
+}
+
+/* ============================================================
    PAINEL ADMIN — moderação + horários (só admin, via RLS)
    Admin = logado com Google e e-mail na tabela `admins`.
    Tudo é reconferido no servidor; o front só reflete.
@@ -1388,6 +1459,8 @@ document.addEventListener("DOMContentLoaded", () => {
   renderArsenal();
   renderGuides();
   loadSchedule();
+  loadDiscord();
+  setInterval(loadDiscord, 90000);
   initTilt();
   initHeroParallax();
 });

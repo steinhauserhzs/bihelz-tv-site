@@ -188,6 +188,23 @@
 /* ---------- Chat da live (YouTube) ---------- */
 .chat-frame{width:100%;height:420px;border:2px solid var(--ro-frame-dark);border-radius:8px;background:#0a0512;margin-top:12px}
 
+/* ---------- Discord — card ao vivo ---------- */
+.disc-widget{margin-bottom:16px}
+.disc-card{border-color:#5865F2}
+.disc-card .ro-window__body{background:linear-gradient(180deg,rgba(88,101,242,.14),rgba(36,16,71,.06))}
+.disc-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.disc-logo{width:44px;height:44px;flex:0 0 44px;filter:drop-shadow(0 2px 6px rgba(88,101,242,.5))}
+.disc-meta{flex:1;min-width:150px}
+.disc-name{font-family:var(--f-serif);font-weight:700;font-size:17px;color:var(--ro-ink)}
+.disc-stats{display:flex;gap:12px;flex-wrap:wrap;margin-top:3px}
+.disc-stat{font-family:var(--f-hud);font-weight:700;font-size:12px;letter-spacing:.5px;color:var(--ro-ink-soft);display:inline-flex;align-items:center}
+.disc-stat--on{color:#2e9e50}
+.disc-dot{width:9px;height:9px;border-radius:50%;background:#3ba55d;margin-right:5px;box-shadow:0 0 7px #3ba55d;animation:pulse 1.6s ease-in-out infinite}
+.disc-join{background:linear-gradient(180deg,#7983f5,#5865F2 60%,#4752c4)!important;color:#fff!important;border-color:#3c45a5!important;text-shadow:0 1px 0 rgba(0,0,0,.35);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 3px 0 #3c45a5,0 6px 14px rgba(0,0,0,.35)!important}
+.disc-join:active{transform:translateY(3px)}
+.disc-avatars{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;padding-top:12px;border-top:1px dashed var(--ro-frame)}
+.disc-av{width:34px;height:34px;border-radius:50%;border:2px solid #5865F2;object-fit:cover;background:#241047}
+
 /* ---------- Contador ao vivo (views / curtidas / assistindo) ---------- */
 .live-stats{display:flex;gap:8px;margin-bottom:12px}
 .live-stat{

@@ -4,7 +4,7 @@
 
 ### O QG da comunidade de Ragnarok Online LATAM do streamer **Bihelz TV**
 
-**[▶️ ABRIR O SITE](https://bihelztv.vercel.app)** · [YouTube](https://www.youtube.com/@bihelzs) · [Discord](https://discord.gg/w36y82XZp) · [Instagram](https://instagram.com/bihelztv)
+**[▶️ ABRIR O SITE](https://bihelztv.vercel.app)** · [YouTube](https://www.youtube.com/@bihelzs) · [Discord](https://discord.gg/nn4MMAW9xm) · [Instagram](https://instagram.com/bihelztv)
 
 ![Tema](https://img.shields.io/badge/tema-Ragnarok%20Online-9d4edd?style=for-the-badge)
 ![Zero deps](https://img.shields.io/badge/build-nenhum-4ecdc4?style=for-the-badge)

@@ -13,7 +13,9 @@ const CANAL = {
   youtube: "@bihelzs",
   youtubeChannelId: "UCDr0kxeySD8NlVFpkI5W1Pw", // canal "bihelz tv" — as lives acontecem aqui
   instagram: "@bielz_life",
-  discordConvite: "https://discord.gg/w36y82XZp",
+  discordConvite: "https://discord.gg/nn4MMAW9xm",
+  discordInvite: "nn4MMAW9xm",              // código do convite (contador ao vivo via API)
+  discordGuildId: "1524620145660792953",    // p/ widget.json (lista de online, se o widget for ativado)
   discordNome: "Laboranok do Ragnatório",
   // Chave da YouTube Data API v3 (pública, restrinja por referrer no Google Cloud).
   // Com ela o site detecta quando o Bihelz está ao vivo e embeda o chat real da
