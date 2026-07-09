@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bihelz TV — Laboranok do Ragnatório · Comunidade Ragnarok LATAM</title>
+<meta name="description" content="O QG da comunidade Bihelz TV: notícias diárias do Ragnarok Online LATAM, lives na Twitch e YouTube, party finder, trade, timer de MVP, Lab do Cientista com calculadora de Farmacologia Especial, tabela elemental e arsenal de ferramentas.">
+<meta property="og:title" content="Bihelz TV — Laboranok do Ragnatório">
+<meta property="og:description" content="Notícias diárias, lives, party finder, trade, timer de MVP e o Lab do Cientista — a comunidade Ragnarok LATAM do Bihelz.">
+<meta property="og:image" content="assets/img/mascot-cientista.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cellipse cx='32' cy='38' rx='26' ry='22' fill='%23ff5fa2'/%3E%3Cellipse cx='24' cy='32' rx='9' ry='11' fill='%23ffd0e6' opacity='.55'/%3E%3Ccircle cx='24' cy='38' r='3' fill='%23421030'/%3E%3Ccircle cx='40' cy='38' r='3' fill='%23421030'/%3E%3Cpath d='M28 46 q4 3 8 0' stroke='%23421030' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;700&family=Poppins:wght@400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/ragnarok.css">
+<link rel="stylesheet" href="assets/css/v2.css">
+</head>
+<body>
+
+<!-- ===================== TOPO ===================== -->
+<header class="topbar">
+  <div class="topbar__inner">
+    <a class="brand" href="#home">
+      <svg class="brand__logo" viewBox="0 0 64 64" aria-hidden="true">
+        <defs>
+          <radialGradient id="pg" cx="40%" cy="30%" r="80%">
+            <stop offset="0%" stop-color="#ffd0e6"/><stop offset="55%" stop-color="#ff5fa2"/><stop offset="100%" stop-color="#c5276f"/>
+          </radialGradient>
+        </defs>
+        <ellipse cx="32" cy="38" rx="26" ry="22" fill="url(#pg)"/>
+        <ellipse cx="23" cy="31" rx="9" ry="10" fill="#ffd0e6" opacity=".5"/>
+        <circle cx="24" cy="38" r="3" fill="#421030"/><circle cx="40" cy="38" r="3" fill="#421030"/>
+        <path d="M28 46 q4 3.5 8 0" stroke="#421030" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      </svg>
+      <span>
+        <span class="brand__name">BIHELZ TV</span><br>
+        <span class="brand__lv">LV.99 · RAGNAROK LATAM</span>
+      </span>
+    </a>
+    <nav class="topnav" aria-label="Navegação principal">
+      <a href="#home" data-nav>Início</a>
+      <a href="#noticias" data-nav>Notícias</a>
+      <a href="#party" data-nav>Party</a>
+      <a href="#mercado" data-nav>Trade</a>
+      <a href="#mvp" data-nav>MVP</a>
+      <a href="#lab" data-nav>Lab</a>
+      <a href="#buscar" data-nav>Buscar</a>
+      <a href="#guias" data-nav>Guias</a>
+      <a href="#comunidade" data-nav>Guilda</a>
+    </nav>
+    <a class="live-badge" id="liveBadge" href="https://twitch.tv/bihelztv" target="_blank" rel="noopener">
+      <span class="dot"></span><span id="liveText">OFFLINE</span>
+    </a>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ===================== HOME ===================== -->
+  <section class="page" id="home">
+
+    <div class="hero-banner" id="heroBanner">
+      <div class="hero-banner__bg" id="heroBg"></div>
+      <div class="hero-banner__content">
+        <img class="mascot" src="assets/img/mascot-cientista.jpg" alt="Mascote cientista da guilda — um Poring de jaleco segurando um frasco">
+        <div>
+          <div class="kicker">Comunidade Bihelz TV · Ragnarok LATAM</div>
+          <h1>Laboranok do Ragnatório</h1>
+          <p>O QG oficial da guilda: notícias diárias, lives, grupo pra jogar junto, trade, timers de MVP e o Lab do Cientista — porque aqui a gente upa na base da ciência. 🧪</p>
+          <div class="cta">
+            <a class="ro-btn" href="https://twitch.tv/bihelztv" target="_blank" rel="noopener">📺 Twitch</a>
+            <a class="ro-btn ro-btn--danger" href="https://www.youtube.com/@bihelzs" target="_blank" rel="noopener">▶️ YouTube</a>
+            <a class="ro-btn ro-btn--sp" href="https://discord.gg/w36y82XZp" target="_blank" rel="noopener">💬 Discord</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="npc-dialog" style="margin-top:18px">
+      <span class="npc-dialog__name">Poring Cientista</span>
+      <p class="npc-dialog__text"><span id="npcText"></span><span class="cursor">▌</span></p>
+      <button class="npc-dialog__next" id="npcNext" type="button">Próximo</button>
+    </div>
+
+    <div class="section-head"><h2>Central da Guilda</h2><div class="rule"></div></div>
+
+    <div class="grid grid--hero">
+      <div class="ro-window tilt">
+        <div class="ro-window__title">Transmissão ao vivo<span class="ro-window__x">✕</span></div>
+        <div class="ro-window__body">
+          <div class="stream-tabs" role="tablist">
+            <button type="button" id="tabTwitch" class="active">📺 Twitch</button>
+            <button type="button" id="tabYoutube">▶️ YouTube</button>
+          </div>
+          <div id="streamBox"></div>
+          <p class="muted mt8" style="font-size:12px" id="streamHint">As lives rolam na Twitch e no YouTube — escolhe teu reino.</p>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="ro-window char-status tilt">
+          <div class="ro-window__title">Status do Streamer<span class="ro-window__x">✕</span></div>
+          <div class="ro-window__body">
+            <div class="row" style="justify-content:space-between;margin-bottom:12px">
+              <div>
+                <div class="char-name">Bihelz TV</div>
+                <div class="char-job">Cientista Supremo do Laboranok</div>
+              </div>
+              <div class="img-slot" aria-hidden="true"><img src="assets/img/icon-lab.jpg" alt=""></div>
+            </div>
+            <div class="line"><b>HP</b><div class="ro-bar"><div class="ro-bar__fill" style="width:100%"></div><span class="ro-bar__label">9999 / 9999</span></div></div>
+            <div class="line"><b>SP</b><div class="ro-bar ro-bar--sp"><div class="ro-bar__fill" style="width:92%"></div><span class="ro-bar__label">690 / 750</span></div></div>
+            <div class="line"><b>EXP</b><div class="ro-bar ro-bar--exp"><div class="ro-bar__fill" style="width:87%"></div><span class="ro-bar__label">até a próxima live</span></div></div>
+            <p class="muted" style="font-size:12px;margin-top:6px">Mercador → Alquimista → Criador → Bioquímico → <b>Cientista</b> (classe 4 oficial!)</p>
+          </div>
+        </div>
+
+        <div class="ro-window tilt">
+          <div class="ro-window__title">⚡ Evento em destaque<span class="ro-window__x">✕</span></div>
+          <div class="ro-window__body center">
+            <p style="font-family:var(--f-serif);font-weight:700;font-size:15px">Stars LATAM 2026 — inscrições encerram em:</p>
+            <div class="countdown" id="starsCountdown"></div>
+            <p class="muted" style="font-size:12px">Classificatórias em agosto · Main Event em setembro · Final global em Bangkok 🇹🇭</p>
+            <a class="ro-btn ro-btn--small mt8" href="#guias">Como participar →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-head"><h2>Diário de Rune-Midgard</h2><div class="rule"></div></div>
+    <p class="section-sub">As últimas do Ragnarok LATAM — atualizado diariamente.</p>
+    <div class="grid grid--3" id="homeNews"></div>
+    <div class="center mt16"><a class="ro-btn ro-btn--ghost" href="#noticias">📜 Ver todas as notícias</a></div>
+
+    <div class="section-head"><h2>Ferramentas da Guilda</h2><div class="rule"></div></div>
+    <div class="grid grid--3" id="homeTools">
+      <a href="#party" class="float-3d" style="text-decoration:none">
+        <div class="ro-window"><div class="ro-window__body row">
+          <div class="img-slot"><img src="assets/img/icon-party.jpg" alt=""></div>
+          <div style="flex:1"><h3 style="font-family:var(--f-serif)">Jogar Junto</h3><p class="muted" style="font-size:13px">Encontre grupo pra upar, caçar MVP ou fechar instância.</p></div>
+        </div></div>
+      </a>
+      <a href="#mercado" class="float-3d" style="text-decoration:none">
+        <div class="ro-window"><div class="ro-window__body row">
+          <div class="img-slot"><img src="assets/img/icon-trade.jpg" alt=""></div>
+          <div style="flex:1"><h3 style="font-family:var(--f-serif)">Quadro de Trade</h3><p class="muted" style="font-size:13px">Anuncie o que você vende ou procura, em zeny.</p></div>
+        </div></div>
+      </a>
+      <a href="#mvp" class="float-3d" style="text-decoration:none">
+        <div class="ro-window"><div class="ro-window__body row">
+          <div class="img-slot"><img src="assets/img/icon-mvp.jpg" alt=""></div>
+          <div style="flex:1"><h3 style="font-family:var(--f-serif)">Timer de MVP</h3><p class="muted" style="font-size:13px">Registre a morte e chegue na janela de respawn.</p></div>
+        </div></div>
+      </a>
+      <a href="#lab" class="float-3d" style="text-decoration:none">
+        <div class="ro-window"><div class="ro-window__body row">
+          <div class="img-slot"><img src="assets/img/icon-lab.jpg" alt=""></div>
+          <div style="flex:1"><h3 style="font-family:var(--f-serif)">Lab do Cientista</h3><p class="muted" style="font-size:13px">Farmacologia Especial, homúnculos e tabela elemental.</p></div>
+        </div></div>
+      </a>
+      <a href="#guias" class="float-3d" style="text-decoration:none">
+        <div class="ro-window"><div class="ro-window__body row">
+          <div class="img-slot"><img src="assets/img/icon-guias.jpg" alt=""></div>
+          <div style="flex:1"><h3 style="font-family:var(--f-serif)">Guias</h3><p class="muted" style="font-size:13px">Classes 4, leveling, zeny, WoE e o competitivo.</p></div>
+        </div></div>
+      </a>
+      <a href="#buscar" class="float-3d" style="text-decoration:none">
+        <div class="ro-window"><div class="ro-window__body row">
+          <div class="img-slot"><img src="assets/img/icon-live.jpg" alt=""></div>
+          <div style="flex:1"><h3 style="font-family:var(--f-serif)">Central do Aventureiro</h3><p class="muted" style="font-size:13px">Busque char, guilda, item ou carta nos melhores databases.</p></div>
+        </div></div>
+      </a>
+      <a href="#comunidade" class="float-3d" style="text-decoration:none">
+        <div class="ro-window"><div class="ro-window__body row">
+          <div class="img-slot"><img src="assets/img/icon-guilda.jpg" alt=""></div>
+          <div style="flex:1"><h3 style="font-family:var(--f-serif)">A Guilda</h3><p class="muted" style="font-size:13px">Redes, programação das lives e regras do Laboranok.</p></div>
+        </div></div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ===================== NOTÍCIAS ===================== -->
+  <section class="page" id="noticias">
+    <div class="section-head"><h2>Notícias do LATAM</h2><div class="rule"></div></div>
+    <p class="section-sub">Curadoria diária do que importa em Rune-Midgard. Atualizado em <b id="newsUpdated"></b>.</p>
+    <div class="ro-window" style="margin-bottom:18px">
+      <div class="ro-window__title">📡 Radar da comunidade — ao vivo<span class="ro-window__x">✕</span></div>
+      <div class="ro-window__body" id="radarBox">
+        <p class="muted" style="font-size:13px">Sintonizando o radar...</p>
+      </div>
+    </div>
+    <div class="row" id="newsFilters" style="margin-bottom:16px"></div>
+    <div class="grid grid--2" id="newsList"></div>
+  </section>
+
+  <!-- ===================== JOGAR JUNTO ===================== -->
+  <section class="page" id="party">
+    <div class="section-head"><h2>Jogar Junto</h2><div class="rule"></div></div>
+    <p class="section-sub">Procurando grupo? Publique seu anúncio e compartilhe no Discord da guilda ou no chat da live.</p>
+    <div class="grid grid--board">
+      <div class="ro-window">
+        <div class="ro-window__title">Criar anúncio<span class="ro-window__x">✕</span></div>
+        <div class="ro-window__body">
+          <form id="partyForm" class="stack" style="gap:12px">
+            <div class="ro-field"><label for="pNick">Seu nick no jogo</label><input class="ro-input" id="pNick" required maxlength="30" placeholder="Ex.: Bihelz"></div>
+            <div class="grid grid--2" style="gap:12px">
+              <div class="ro-field"><label for="pClasse">Classe</label><select class="ro-select" id="pClasse"></select></div>
+              <div class="ro-field"><label for="pNivel">Nível base</label><input class="ro-input" id="pNivel" type="number" min="1" max="250" required placeholder="99"></div>
+            </div>
+            <div class="ro-field"><label for="pObjetivo">Objetivo</label>
+              <select class="ro-select" id="pObjetivo">
+                <option>Upar</option><option>MVP</option><option>Instância</option>
+                <option>Quest</option><option>WoE/PvP</option><option>Social</option>
+              </select>
+            </div>
+            <div class="ro-field"><label for="pHorario">Horário</label><input class="ro-input" id="pHorario" required maxlength="60" placeholder="Ex.: Hoje 21h / fins de semana"></div>
+            <div class="ro-field"><label for="pContato">Contato (Discord, Twitch...)</label><input class="ro-input" id="pContato" required maxlength="60" placeholder="Ex.: meunick#0000"></div>
+            <div class="ro-field"><label for="pDesc">Mensagem</label><textarea class="ro-textarea" id="pDesc" maxlength="200" placeholder="Conta o que você procura..."></textarea></div>
+            <button class="ro-btn" type="submit">⚔️ Publicar anúncio</button>
+          </form>
+        </div>
+      </div>
+      <div>
+        <div class="row" id="partyFilters" style="margin-bottom:14px"></div>
+        <div class="stack" id="partyList"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== MERCADO ===================== -->
+  <section class="page" id="mercado">
+    <div class="section-head"><h2>Quadro de Trade</h2><div class="rule"></div></div>
+    <p class="section-sub">Anuncie aqui e feche o negócio no jogo. Combine sempre em local seguro e confirme o item na janela de troca! 😉</p>
+    <div class="grid grid--board">
+      <div class="ro-window">
+        <div class="ro-window__title">Novo anúncio<span class="ro-window__x">✕</span></div>
+        <div class="ro-window__body">
+          <form id="tradeForm" class="stack" style="gap:12px">
+            <div class="ro-field"><label for="tTipo">Tipo</label>
+              <select class="ro-select" id="tTipo"><option value="vendo">Vendo</option><option value="compro">Compro</option></select>
+            </div>
+            <div class="ro-field"><label for="tItem">Item</label><input class="ro-input" id="tItem" required maxlength="60" placeholder="Ex.: Espada Bastarda +7"></div>
+            <div class="ro-field"><label for="tDetalhe">Detalhes (cartas, refino...)</label><input class="ro-input" id="tDetalhe" maxlength="80" placeholder="Ex.: com 2x Carta Andre"></div>
+            <div class="ro-field"><label for="tPreco">Preço (zeny)</label><input class="ro-input" id="tPreco" type="number" min="1" required placeholder="1000000"></div>
+            <div class="ro-field"><label for="tContato">Contato</label><input class="ro-input" id="tContato" required maxlength="60" placeholder="Ex.: meunick#0000"></div>
+            <button class="ro-btn" type="submit">💰 Publicar anúncio</button>
+          </form>
+        </div>
+      </div>
+      <div>
+        <div class="row" id="tradeFilters" style="margin-bottom:14px"></div>
+        <div class="stack" id="tradeList"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== MVP TIMER ===================== -->
+  <section class="page" id="mvp">
+    <div class="section-head"><h2>Timer de MVP</h2><div class="rule"></div></div>
+    <p class="section-sub">Matou (ou viu morrer) um MVP? Clique em <b>“Morreu agora”</b> e o timer avisa quando a janela de respawn abrir. Os tempos são aproximados — confirme no servidor. Fica salvo no seu navegador.</p>
+    <div class="grid grid--3" id="mvpList"></div>
+  </section>
+
+  <!-- ===================== LAB DO CIENTISTA ===================== -->
+  <section class="page" id="lab">
+    <div class="section-head"><h2>Lab do Cientista</h2><div class="rule"></div></div>
+    <p class="section-sub">
+      <span class="bihelz-badge">⚗️ A classe do Bihelz</span>&nbsp;
+      No LATAM, a 4ª classe da linha do Alquimista se chama oficialmente <b>Cientista</b> — sim, o Bihelz joga de Cientista de verdade. Ferramentas verificadas na bROWiki e iRO Wiki. Bem-vindo ao Laboranok!
+    </p>
+
+    <div class="grid grid--2" style="align-items:start">
+      <div class="ro-window tilt">
+        <div class="ro-window__title">⚗️ Farmacologia Avançada<span class="ro-window__x">✕</span></div>
+        <div class="ro-window__body">
+          <p class="muted" style="font-size:13px;margin-bottom:12px">Calcule quantas poções você cria por brew com a skill do Bioquímico (taxas do servidor LATAM).</p>
+          <form id="pharmaForm" class="stack" style="gap:10px">
+            <div class="grid grid--3" style="gap:10px">
+              <div class="ro-field"><label for="phInt">INT</label><input class="ro-input" id="phInt" type="number" min="1" max="300" value="120"></div>
+              <div class="ro-field"><label for="phDex">DEX</label><input class="ro-input" id="phDex" type="number" min="1" max="300" value="90"></div>
+              <div class="ro-field"><label for="phLuk">LUK</label><input class="ro-input" id="phLuk" type="number" min="1" max="300" value="30"></div>
+            </div>
+            <div class="grid grid--3" style="gap:10px">
+              <div class="ro-field"><label for="phJob">Nv. Classe</label><input class="ro-input" id="phJob" type="number" min="1" max="70" value="50"></div>
+              <div class="ro-field"><label for="phBase">Nv. Base</label><input class="ro-input" id="phBase" type="number" min="100" max="250" value="200"></div>
+              <div class="ro-field"><label for="phResearch">Pesquisa de Poções</label><input class="ro-input" id="phResearch" type="number" min="0" max="10" value="10"></div>
+            </div>
+            <div class="ro-field"><label for="phFcp">Proteção Química Total (nível 0–5)</label><input class="ro-input" id="phFcp" type="number" min="0" max="5" value="5"></div>
+            <div class="ro-field"><label for="phItem">Poção a criar</label><select class="ro-select" id="phItem"></select></div>
+            <div class="ro-field"><label for="phSkill">Nível da skill Farmacologia Especial</label><select class="ro-select" id="phSkill"></select></div>
+          </form>
+          <div class="lab-result" id="pharmaResult"></div>
+        </div>
+      </div>
+
+      <div class="ro-window tilt">
+        <div class="ro-window__title">🌀 Tabela Elemental (Renewal)<span class="ro-window__x">✕</span></div>
+        <div class="ro-window__body">
+          <p class="muted" style="font-size:13px;margin-bottom:12px">Escolha o elemento do monstro e veja quanto cada elemento de ataque causa de dano.</p>
+          <div class="elem-controls">
+            <div class="ro-field" style="flex:1;min-width:150px"><label for="elemDef">Elemento do alvo</label><select class="ro-select" id="elemDef"></select></div>
+            <div class="ro-field" style="width:110px"><label for="elemLv">Nível</label><select class="ro-select" id="elemLv"></select></div>
+          </div>
+          <div class="elem-grid" id="elemGrid"></div>
+          <p class="muted" style="font-size:11px;margin-top:10px">100% = dano normal · verde = vantagem · 0% = imune. Jogadores são sempre defesa nível 1. Tabela pós-patch de 2024 — guias antigos estão desatualizados!</p>
+          <hr style="border:none;border-top:1px dashed var(--ro-frame);margin:14px 0">
+          <p class="muted" style="font-size:13px;margin-bottom:10px"><b>Modificador de tamanho</b> (só ataque físico com arma — magia ignora):</p>
+          <div class="elem-controls">
+            <div class="ro-field" style="flex:1;min-width:150px"><label for="sizeWeapon">Sua arma</label><select class="ro-select" id="sizeWeapon"></select></div>
+            <div class="ro-field" style="width:130px"><label for="sizeTarget">Tamanho do alvo</label><select class="ro-select" id="sizeTarget"><option>Pequeno</option><option>Médio</option><option>Grande</option></select></div>
+          </div>
+          <div class="lab-result" id="sizeResult"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid--2 mt16" style="align-items:start">
+      <div class="ro-window tilt">
+        <div class="ro-window__title">📋 Rotina do Laboranok<span class="ro-window__x">✕</span></div>
+        <div class="ro-window__body">
+          <div class="grid grid--2" style="gap:10px;margin-bottom:14px">
+            <div class="lab-result" style="margin-top:0">
+              <div class="lbl">Reset diário (4h BRT) em</div>
+              <div class="big" id="resetCountdown" style="font-size:24px">--:--:--</div>
+            </div>
+            <div class="lab-result" style="margin-top:0">
+              <div class="lbl">Próxima WoE (dom 20h) em</div>
+              <div class="big" id="woeCountdown" style="font-size:24px">--:--:--</div>
+            </div>
+          </div>
+          <div id="dailyChecklist"></div>
+          <p class="muted" style="font-size:11px;margin-top:10px">O checklist desmarca sozinho a cada reset (diário 4h · semanal segunda 4h). Fica salvo no seu navegador.</p>
+        </div>
+      </div>
+
+      <div class="ro-window tilt">
+        <div class="ro-window__title">🔮 Qual Homunculus S é pra você?<span class="ro-window__x">✕</span></div>
+        <div class="ro-window__body">
+          <div class="ro-field"><label for="quizGoal">Meu objetivo é...</label><select class="ro-select" id="quizGoal"></select></div>
+          <div class="lab-result" id="quizResult"></div>
+          <p class="muted" style="font-size:12px;margin-top:10px" id="homunNote"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="ro-window mt16">
+      <div class="ro-window__title">🧬 Homúnculos — guia rápido<span class="ro-window__x">✕</span></div>
+      <div class="ro-window__body">
+        <div class="homun-grid" id="homunGrid"></div>
+      </div>
+    </div>
+
+    <div class="section-head"><h2>Arsenal do Laboratório</h2><div class="rule"></div></div>
+    <p class="section-sub">As melhores ferramentas da comunidade mundial de Ragnarok — testadas e aprovadas pela guilda.</p>
+    <div class="arsenal-grid" id="arsenalGrid"></div>
+  </section>
+
+  <!-- ===================== CENTRAL DO AVENTUREIRO ===================== -->
+  <section class="page" id="buscar">
+    <div class="section-head"><h2>Central do Aventureiro</h2><div class="rule"></div></div>
+    <p class="section-sub">O "op.gg" do Rune-Midgard: digite um nome de personagem, guilda, item ou carta e caia direto na busca dos melhores databases. Abre em nova aba com o termo já preenchido.</p>
+
+    <div class="ro-window tilt">
+      <div class="ro-window__title">🔎 Buscar<span class="ro-window__x">✕</span></div>
+      <div class="ro-window__body">
+        <form id="searchForm" class="row" style="gap:10px">
+          <input class="ro-input" id="searchTerm" style="flex:1;min-width:180px" placeholder="Ex.: Baphomet, Espada Bastarda, nick do player..." maxlength="60" required>
+          <select class="ro-select" id="searchMode" style="width:210px">
+            <option value="database">Item / Monstro / Carta</option>
+            <option value="jogador">Personagem / Guilda / Build</option>
+          </select>
+          <button class="ro-btn" type="submit">Buscar ⚔️</button>
+        </form>
+        <p class="muted" style="font-size:12px;margin-top:10px">Dica: no modo <b>Personagem</b>, o ROla Market mostra as lojinhas de um vendedor — o mais perto de um "perfil" que existe no RO. Não há op.gg oficial nem API de perfil no LATAM; estes são os melhores caminhos.</p>
+      </div>
+    </div>
+
+    <div class="section-head"><h2 style="font-size:22px">Destinos de busca</h2><div class="rule"></div></div>
+    <div class="arsenal-grid" id="searchDestinos"></div>
+  </section>
+
+  <!-- ===================== GUIAS ===================== -->
+  <section class="page" id="guias">
+    <div class="section-head"><h2>Guias da Guilda</h2><div class="rule"></div></div>
+    <p class="section-sub">O essencial pra sobreviver (e prosperar) em Rune-Midgard, na visão da comunidade do Bihelz.</p>
+    <div class="stack" id="guideList"></div>
+  </section>
+
+  <!-- ===================== COMUNIDADE ===================== -->
+  <section class="page" id="comunidade">
+    <div class="section-head"><h2>A Guilda</h2><div class="rule"></div></div>
+    <p class="section-sub">Siga o Bihelz em todo canto e vem fazer parte do <b>Laboranok do Ragnatório</b> — a comunidade mais científica do Ragnarok LATAM.</p>
+
+    <div class="grid grid--2">
+      <a class="soc-card" href="https://twitch.tv/bihelztv" target="_blank" rel="noopener" style="text-decoration:none">
+        <div class="ro-window tilt" style="width:100%"><div class="ro-window__body row">
+          <div class="ro-slot">📺</div>
+          <div><div class="net">Twitch</div><div class="handle">/bihelztv</div></div>
+        </div></div>
+      </a>
+      <a class="soc-card" href="https://www.youtube.com/@bihelzs" target="_blank" rel="noopener" style="text-decoration:none">
+        <div class="ro-window tilt" style="width:100%"><div class="ro-window__body row">
+          <div class="img-slot"><img src="assets/img/icon-live.jpg" alt=""></div>
+          <div><div class="net">YouTube — lives também!</div><div class="handle">@bihelzs</div></div>
+        </div></div>
+      </a>
+      <a class="soc-card" href="https://instagram.com/bihelztv" target="_blank" rel="noopener" style="text-decoration:none">
+        <div class="ro-window tilt" style="width:100%"><div class="ro-window__body row">
+          <div class="ro-slot">📸</div>
+          <div><div class="net">Instagram</div><div class="handle">@bihelztv</div></div>
+        </div></div>
+      </a>
+      <a class="soc-card" href="https://discord.gg/w36y82XZp" target="_blank" rel="noopener" style="text-decoration:none">
+        <div class="ro-window tilt" style="width:100%"><div class="ro-window__body row">
+          <div class="ro-slot">💬</div>
+          <div><div class="net">Discord</div><div class="handle">Laboranok do Ragnatório</div></div>
+        </div></div>
+      </a>
+    </div>
+
+    <div class="grid grid--2 mt16">
+      <div class="ro-window">
+        <div class="ro-window__title">Programação das lives<span class="ro-window__x">✕</span></div>
+        <div class="ro-window__body">
+          <table class="ro-table" id="scheduleTable">
+            <thead><tr><th>Dia</th><th>Hora</th><th>Missão</th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <p class="muted" style="font-size:12px;margin-top:10px">* Horários podem mudar — confirme na Twitch ou no YouTube.</p>
+        </div>
+      </div>
+      <div class="ro-window">
+        <div class="ro-window__title">Regras da guilda<span class="ro-window__x">✕</span></div>
+        <div class="ro-window__body">
+          <ul style="padding-left:20px;display:flex;flex-direction:column;gap:8px;font-size:14px;line-height:1.5">
+            <li>🤝 <b>Respeito acima de tudo</b> — aqui é família, do novato Lv.1 ao veterano Lv.99.</li>
+            <li>☠️ <b>Sem roubo de MVP</b> — quem chegou primeiro, caça primeiro.</li>
+            <li>💰 <b>Trade limpo</b> — confirme sempre os itens na janela de troca; golpista é banido.</li>
+            <li>📣 <b>Divulgue com bom senso</b> — anúncios no canal certo do Discord.</li>
+            <li>🧪 <b>Ciência se compartilha</b> — descobriu uma build, um spot, uma receita? Conta pra guilda.</li>
+            <li>❤️ <b>Ajude quem chega</b> — todo mundo já foi um Poring um dia.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>Feito com ❤️ pelo Laboranok do Ragnatório · Site de fãs, não oficial.</p>
+    <p>Ragnarok Online é marca registrada da Gravity Co., Ltd. · Arte do site 100% original gerada com IA exclusivamente para esta comunidade.</p>
+    <p><a href="https://ro.gnjoylatam.com" target="_blank" rel="noopener">Site oficial do Ragnarok Online LATAM ↗</a></p>
+  </footer>
+</main>
+
+<!-- Hotbar mobile (F1–F8, como a barra de atalhos do jogo) -->
+<nav class="hotbar" aria-label="Navegação móvel">
+  <a href="#home" data-nav><span class="fkey">F1</span><span class="slot"><img src="assets/img/mascot-cientista.jpg" alt=""></span><span class="lbl">Início</span></a>
+  <a href="#noticias" data-nav><span class="fkey">F2</span><span class="slot"><img src="assets/img/icon-noticias.jpg" alt=""></span><span class="lbl">News</span></a>
+  <a href="#party" data-nav><span class="fkey">F3</span><span class="slot"><img src="assets/img/icon-party.jpg" alt=""></span><span class="lbl">Party</span></a>
+  <a href="#mercado" data-nav><span class="fkey">F4</span><span class="slot"><img src="assets/img/icon-trade.jpg" alt=""></span><span class="lbl">Trade</span></a>
+  <a href="#mvp" data-nav><span class="fkey">F5</span><span class="slot"><img src="assets/img/icon-mvp.jpg" alt=""></span><span class="lbl">MVP</span></a>
+  <a href="#lab" data-nav><span class="fkey">F6</span><span class="slot"><img src="assets/img/icon-lab.jpg" alt=""></span><span class="lbl">Lab</span></a>
+  <a href="#guias" data-nav><span class="fkey">F7</span><span class="slot"><img src="assets/img/icon-guias.jpg" alt=""></span><span class="lbl">Guias</span></a>
+  <a href="#comunidade" data-nav><span class="fkey">F8</span><span class="slot"><img src="assets/img/icon-guilda.jpg" alt=""></span><span class="lbl">Guilda</span></a>
+</nav>
+
+<div class="sys-toast" id="sysToast" role="status" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/js/supabase-config.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
