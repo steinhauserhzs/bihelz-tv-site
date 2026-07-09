@@ -13,8 +13,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;700&family=Poppins:wght@400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/ragnarok.css">
-<link rel="stylesheet" href="assets/css/v2.css">
+<link rel="stylesheet" href="assets/css/ragnarok.css?v=20260709c">
+<link rel="stylesheet" href="assets/css/v2.css?v=20260709c">
 </head>
 <body>
 
@@ -78,10 +78,12 @@
       <div class="ro-window tilt">
         <div class="ro-window__title">▶️ Live no YouTube<span class="ro-window__x">✕</span></div>
         <div class="ro-window__body">
+          <div id="liveStats" class="live-stats hide"></div>
           <div id="streamBox"></div>
           <div id="liveChatBox" class="hide"></div>
           <div class="row mt12">
             <button class="ro-btn ro-btn--small ro-btn--danger" id="toggleChat" type="button">💬 Chat da live</button>
+            <button class="ro-btn ro-btn--small hide" id="unmuteBtn" type="button">🔊 Som 25%</button>
             <a class="ro-btn ro-btn--small ro-btn--ghost" href="https://www.youtube.com/@bihelzs/live" target="_blank" rel="noopener">Abrir no YouTube ↗</a>
           </div>
           <p class="muted mt8" style="font-size:12px" id="streamHint">As lives do Bihelz rolam no YouTube. Ative o chat pra conversar durante a transmissão.</p>
@@ -459,9 +461,9 @@
 <div class="sys-toast" id="sysToast" role="status" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="assets/js/supabase-config.js"></script>
-<script src="assets/js/data.js"></script>
-<script src="assets/js/app.js"></script>
-<script src="assets/js/radio.js"></script>
+<script src="assets/js/supabase-config.js?v=20260709c"></script>
+<script src="assets/js/data.js?v=20260709c"></script>
+<script src="assets/js/app.js?v=20260709c"></script>
+<script src="assets/js/radio.js?v=20260709c"></script>
 </body>
 </html>

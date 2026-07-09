@@ -193,17 +193,30 @@ async function detectLive() {
   } catch { return null; }
 }
 
+let statsTimer = null;
+
 async function checkLive() {
   const badge = $("#liveBadge"), txt = $("#liveText");
-  if (!ytKey()) { txt.textContent = "YOUTUBE"; badge.classList.remove("is-live"); return; }
+  if (!ytKey()) { txt.textContent = "YOUTUBE"; badge.classList.remove("is-live"); mountYouTube(); return; }
   liveVideoId = await detectLive();
   const live = !!liveVideoId;
   badge.classList.toggle("is-live", live);
   txt.textContent = live ? "AO VIVO" : "OFFLINE";
-  mountYouTube();
+  if (live) {
+    mountLivePlayer(liveVideoId);        // autoplay a 25% via IFrame API
+    $("#unmuteBtn").classList.remove("hide");
+    fetchLiveStats(liveVideoId);
+    if (!statsTimer) statsTimer = setInterval(() => fetchLiveStats(liveVideoId), 60000);
+  } else {
+    mountYouTube();                       // player do canal (sem stats)
+    $("#unmuteBtn").classList.add("hide");
+    $("#liveStats").classList.add("hide");
+    if (statsTimer) { clearInterval(statsTimer); statsTimer = null; }
+  }
   if (!$("#liveChatBox").classList.contains("hide")) mountChat(true);
 }
 
+/* embed simples do canal (offline ou sem key) */
 function mountYouTube() {
   const f = document.createElement("iframe");
   f.className = "stream-frame";
@@ -214,6 +227,94 @@ function mountYouTube() {
   f.allow = "autoplay; encrypted-media; picture-in-picture";
   f.title = "Live do Bihelz TV no YouTube";
   setContent($("#streamBox"), f);
+}
+
+/* ---------- Player com controle de volume (IFrame API) ---------- */
+let ytApiPromise = null;
+function loadYTApi() {
+  if (window.YT && window.YT.Player) return Promise.resolve();
+  if (ytApiPromise) return ytApiPromise;
+  ytApiPromise = new Promise((resolve) => {
+    const prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => { if (typeof prev === "function") prev(); resolve(); };
+    const tag = document.createElement("script");
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(tag);
+  });
+  return ytApiPromise;
+}
+
+let livePlayer = null, liveUnmuted = false;
+async function mountLivePlayer(videoId) {
+  await loadYTApi();
+  const box = $("#streamBox");
+  const holder = el("div"); holder.id = "ytPlayer"; holder.className = "stream-frame";
+  setContent(box, holder);
+  try {
+    livePlayer = new YT.Player("ytPlayer", {
+      videoId,
+      playerVars: { autoplay: 1, mute: 1, playsinline: 1, modestbranding: 1, rel: 0 },
+      events: {
+        onReady: (e) => { try { e.target.setVolume(25); e.target.playVideo(); } catch {} armUnmute(); },
+      },
+    });
+  } catch { mountYouTube(); }
+}
+
+/* autoplay entra mudo (política do navegador); solta o som a 25%
+   no 1º clique/tecla do usuário — e pausa a rádio pra não misturar. */
+function armUnmute() {
+  if (liveUnmuted) return;
+  const go = () => {
+    if (!livePlayer) return;
+    try { livePlayer.unMute(); livePlayer.setVolume(25); } catch {}
+    liveUnmuted = true;
+    if (window.BZRadio && window.BZRadio.isPlaying()) window.BZRadio.pause();
+    document.removeEventListener("pointerdown", go);
+    document.removeEventListener("keydown", go);
+  };
+  document.addEventListener("pointerdown", go);
+  document.addEventListener("keydown", go);
+}
+function unmuteLive() {
+  if (!livePlayer) return toast("Sem live agora.");
+  try { livePlayer.unMute(); livePlayer.setVolume(25); livePlayer.playVideo(); } catch {}
+  liveUnmuted = true;
+  if (window.BZRadio && window.BZRadio.isPlaying()) window.BZRadio.pause();
+  toast("Som da live ligado a 25% 🔊");
+}
+
+/* ---------- Contador ao vivo (views / curtidas / assistindo) ---------- */
+async function fetchLiveStats(videoId) {
+  if (!ytKey() || !videoId) return;
+  try {
+    const r = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails,statistics&id=${videoId}&key=${ytKey()}`);
+    if (!r.ok) return;
+    const d = await r.json();
+    const it = d.items && d.items[0];
+    if (!it) return;
+    renderLiveStats({
+      viewers: it.liveStreamingDetails && it.liveStreamingDetails.concurrentViewers,
+      views: it.statistics && it.statistics.viewCount,
+      likes: it.statistics && it.statistics.likeCount,
+    });
+  } catch {}
+}
+function renderLiveStats(s) {
+  const box = $("#liveStats");
+  if (!box) return;
+  const fmt = (n) => (n == null ? "—" : Number(n).toLocaleString("pt-BR"));
+  const stat = (ic, val, lb) => {
+    const d = el("div", "live-stat");
+    d.append(el("span", "live-stat__ic", ic), el("span", "live-stat__v", fmt(val)), el("span", "live-stat__l", lb));
+    return d;
+  };
+  setContent(box,
+    stat("🔴", s.viewers, "assistindo"),
+    stat("👁", s.views, "views"),
+    stat("👍", s.likes, "curtidas"),
+  );
+  box.classList.remove("hide");
 }
 
 function mountChat(forceShow) {
@@ -1259,6 +1360,7 @@ document.addEventListener("DOMContentLoaded", () => {
   $("#npcNext").addEventListener("click", () => npcSay(++npcIdx));
   mountYouTube();
   $("#toggleChat").addEventListener("click", () => mountChat(false));
+  $("#unmuteBtn").addEventListener("click", unmuteLive);
   checkLive();
   setInterval(checkLive, 5 * 60 * 1000);
   initAuth();
