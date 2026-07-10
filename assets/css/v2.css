@@ -528,3 +528,97 @@ body::before{display:none!important} /* substitui as estrelas CSS pelo canvas an
   .hero-banner__bg{transform:none!important}
   .mascot,.float-3d,.mote{animation:none!important}
 }
+
+/* ============================================================
+   Selo do Reino — contador de visitas (rodapé)
+   Usa a paleta/fontes do tema; reaproveita .img-slot.
+   ============================================================ */
+.viewcount{
+  display:inline-flex;align-items:center;gap:10px;
+  margin:0 auto 18px;padding:7px 16px 7px 9px;
+  border:1px solid rgba(255,194,75,.55);          /* dourado ~55% */
+  border-radius:999px;
+  background:rgba(18,7,31,.70);                    /* noite #12071f ~70% */
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  box-shadow:inset 0 1px 0 rgba(255,226,160,.12),0 6px 18px rgba(0,0,0,.35);
+  position:relative;
+}
+/* filetes dourados nos cantos superiores (moldura RO) */
+.viewcount::before,.viewcount::after{
+  content:"";position:absolute;top:-1px;width:13px;height:13px;pointer-events:none;
+  border-top:2px solid var(--bz-gold);
+}
+.viewcount::before{left:-1px;border-left:2px solid var(--bz-gold);border-top-left-radius:12px}
+.viewcount::after{right:-1px;border-right:2px solid var(--bz-gold);border-top-right-radius:12px}
+
+/* reusa .img-slot mas em escala de selo (24px) */
+.viewcount__emblem{
+  width:24px;height:24px;flex:0 0 24px;border-radius:7px;padding:0;
+  border:1px solid var(--bz-gold-dark);
+  box-shadow:inset 0 0 0 1px rgba(255,226,160,.3);
+}
+.viewcount__emblem img{width:100%;height:100%;object-fit:contain;border-radius:6px}
+
+.viewcount__label{
+  font-family:var(--f-hud);font-weight:700;font-size:11px;letter-spacing:2px;
+  text-transform:uppercase;color:rgba(233,220,255,.65);white-space:nowrap;
+}
+/* ponto rosa "registrando" piscando devagar */
+.viewcount__label::before{
+  content:"";display:inline-block;width:6px;height:6px;border-radius:50%;
+  background:var(--bz-pink);margin-right:7px;vertical-align:middle;
+  box-shadow:0 0 7px rgba(255,95,162,.9);
+  animation:viewcount-pulse 2.6s ease-in-out infinite;
+}
+@keyframes viewcount-pulse{0%,100%{opacity:.35}50%{opacity:1}}
+/* se ESTA visita foi registrada, o ponto pulsa mais vivo */
+.viewcount[data-self="1"] .viewcount__label::before{animation-duration:1.3s}
+
+/* número herói: dourado com glow roxo Level 99, tabular pra não tremer */
+.viewcount__num{
+  display:inline-flex;align-items:center;gap:1px;
+  font-family:var(--f-hud);font-weight:700;font-size:17px;
+  font-variant-numeric:tabular-nums;color:var(--bz-gold);
+  text-shadow:0 0 9px rgba(123,47,214,.75),0 0 2px rgba(255,194,75,.6);
+}
+/* cada casa do odômetro numa caixinha (min-width p/ não cortar glyph largo) */
+.viewcount__digit{
+  display:inline-block;min-width:.62em;text-align:center;
+  overflow:hidden;line-height:1.1;position:relative;
+}
+.viewcount__digit--sep{min-width:auto;color:rgba(255,194,75,.7);text-shadow:none}
+/* micro-roll vertical quando um dígito muda (efeito odômetro) */
+.viewcount__digit.is-rolling{animation:viewcount-roll .16s ease-out}
+@keyframes viewcount-roll{
+  0%{transform:translateY(-42%);opacity:.35}
+  100%{transform:translateY(0);opacity:1}
+}
+
+.viewcount__suffix{
+  font-family:var(--f-body);font-size:10.5px;font-style:italic;
+  color:rgba(233,220,255,.5);white-space:nowrap;
+}
+
+/* flash dourado→rosa coroando a chegada do total */
+.viewcount.is-arrived .viewcount__num{animation:viewcount-flash .45s ease-out}
+@keyframes viewcount-flash{
+  0%{text-shadow:0 0 9px rgba(123,47,214,.75)}
+  45%{text-shadow:0 0 16px rgba(255,194,75,.95),0 0 26px rgba(255,95,162,.8)}
+  100%{text-shadow:0 0 9px rgba(123,47,214,.75)}
+}
+
+/* telas estreitas: empilha (rótulo em cima, dígitos embaixo) */
+@media (max-width:520px){
+  .viewcount{flex-wrap:wrap;justify-content:center;gap:6px 10px;padding:9px 14px}
+  .viewcount__emblem{order:0}
+  .viewcount__label{order:1;flex-basis:100%;text-align:center;white-space:normal;font-size:10px;letter-spacing:1.5px}
+  .viewcount__num{order:2}
+  .viewcount__suffix{order:3}
+}
+
+/* acessibilidade: sem rolagem/flash em prefers-reduced-motion */
+@media (prefers-reduced-motion:reduce){
+  .viewcount__label::before{animation:none;opacity:.8}
+  .viewcount__digit.is-rolling{animation:none}
+  .viewcount.is-arrived .viewcount__num{animation:none}
+}

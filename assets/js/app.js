@@ -1927,6 +1927,126 @@ function showIOSInstall() {
 }
 
 /* ============================================================
+   SELO DO REINO — contador de visitas GLOBAL (Supabase)
+   +1 atômico via RPC SECURITY DEFINER, no máximo 1 por navegador a
+   cada 30 min (janela em localStorage). Leitura via RPC get_site_views.
+   Count-up "odômetro" com easeOutExpo; sempre monotônico (nunca
+   diminui); fallback pro último total salvo se o Supabase falhar.
+   ZERO innerHTML — tudo createElement/textContent.
+   ============================================================ */
+let _vcCells = [];   // células de dígito persistentes
+let _vcStr = null;   // string atualmente renderizada
+
+function _vcRender(str) {
+  const host = $("#viewCounterNum");
+  if (!host || str === _vcStr) return;
+  // estrutura mudou (nº de chars diferente) -> reconstrói do zero
+  if (_vcStr == null || str.length !== _vcStr.length) {
+    clearNode(host);
+    _vcCells = [];
+    for (const ch of str) {
+      const isDigit = ch >= "0" && ch <= "9";
+      const cell = el("span", "viewcount__digit" + (isDigit ? "" : " viewcount__digit--sep"), ch);
+      host.append(cell);
+      _vcCells.push({ node: cell, isDigit, ch });
+    }
+  } else {
+    // mesma largura -> atualiza só os dígitos que mudaram, com micro-roll
+    for (let i = 0; i < str.length; i++) {
+      const c = _vcCells[i], ch = str[i];
+      if (c && c.ch !== ch) {
+        c.node.textContent = ch;
+        c.ch = ch;
+        if (c.isDigit && !REDUCED) {
+          c.node.classList.remove("is-rolling");
+          void c.node.offsetWidth; // re-dispara a animação
+          c.node.classList.add("is-rolling");
+        }
+      }
+    }
+  }
+  _vcStr = str;
+}
+
+function _vcCountUp(from, to) {
+  const wrap = $("#viewCounter");
+  from = Math.max(0, Math.floor(from));
+  to = Math.max(from, Math.floor(to)); // nunca conta pra baixo
+  if (REDUCED || from === to) {
+    _vcRender(fmtZeny(to));
+    _vcArrived(wrap);
+    return;
+  }
+  const dur = 1100, t0 = performance.now();
+  const ease = (x) => (x >= 1 ? 1 : 1 - Math.pow(2, -10 * x)); // easeOutExpo
+  function step(now) {
+    const p = Math.min(1, (now - t0) / dur);
+    _vcRender(fmtZeny(Math.round(from + (to - from) * ease(p))));
+    if (p < 1) requestAnimationFrame(step);
+    else { _vcRender(fmtZeny(to)); _vcArrived(wrap); }
+  }
+  requestAnimationFrame(step);
+}
+
+function _vcArrived(wrap) {
+  if (!wrap || REDUCED) return;
+  wrap.classList.remove("is-arrived");
+  void wrap.offsetWidth;
+  wrap.classList.add("is-arrived");
+}
+
+async function initViewCounter() {
+  const wrap = $("#viewCounter");
+  if (!wrap) return;
+  const LS_KEY = "bz_views_last";   // último total conhecido (piso + fallback)
+  const TS_KEY = "bz_view_ts";      // quando este navegador contou por último
+  const WINDOW = 30 * 60 * 1000;    // 1 "visita" por navegador a cada 30 min
+  const cached = Math.max(0, parseInt(localStorage.getItem(LS_KEY) || "0", 10) || 0);
+
+  wrap.classList.remove("hide");
+  wrap.setAttribute("aria-label", `Último censo do reino: ${fmtZeny(cached)} aventureiros`);
+  _vcRender(fmtZeny(cached)); // mostra algo na hora (piso agradável)
+
+  const fallback = () => {
+    wrap.setAttribute("aria-label", `Último censo do reino: ${fmtZeny(cached)} aventureiros`);
+    wrap.setAttribute("title", "registro do reino em manutenção — mostrando o último censo");
+  };
+
+  // sem Supabase configurado -> mostra o último censo e para (nada quebra)
+  if (typeof SB === "undefined" || !SB) { fallback(); return; }
+
+  let total = null;
+  try {
+    const lastTs = parseInt(localStorage.getItem(TS_KEY) || "0", 10) || 0;
+    const shouldCount = Date.now() - lastTs > WINDOW;
+    if (shouldCount) {
+      const { data, error } = await SB.rpc("increment_site_views"); // +1 atômico -> novo total
+      if (error) throw error;
+      total = Number(data);
+      localStorage.setItem(TS_KEY, String(Date.now()));
+      wrap.dataset.self = "1"; // registramos a visita deste navegador
+    } else {
+      const { data, error } = await SB.rpc("get_site_views"); // só lê o total atual
+      if (error) throw error;
+      total = Number(data);
+    }
+  } catch (_) {
+    fallback(); // qualquer falha -> fallback gracioso
+    return;
+  }
+
+  if (!Number.isFinite(total)) { fallback(); return; }
+
+  const shown = Math.max(cached, total); // monotônico: nunca exibe menos que o piso local
+  localStorage.setItem(LS_KEY, String(shown));
+  wrap.setAttribute("aria-label", `${fmtZeny(shown)} aventureiros já cruzaram este portal e contando`);
+  if (wrap.dataset.self === "1") {
+    wrap.setAttribute("title", `Bem-vindo, aventureiro! Você é o nº ${fmtZeny(total)} a pisar em Ragnatório 🏰`);
+  }
+  _vcCountUp(cached, shown);
+}
+
+/* ============================================================
    BOOT
    ============================================================ */
 document.addEventListener("DOMContentLoaded", () => {
@@ -1971,4 +2091,5 @@ document.addEventListener("DOMContentLoaded", () => {
   initTilt();
   initHeroParallax();
   initPWA();
+  initViewCounter();
 });
