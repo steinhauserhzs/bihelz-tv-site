@@ -1873,6 +1873,60 @@ async function initAuth() {
 }
 
 /* ============================================================
+   PWA — service worker + botão de instalar (Android/iOS/desktop)
+   ============================================================ */
+function initPWA() {
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => { navigator.serviceWorker.register("/sw.js").catch(() => {}); });
+  }
+  const btn = $("#installBtn");
+  if (!btn) return;
+  const standalone = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  if (standalone) return; // já rodando como app instalado
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  let deferred = null;
+
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault(); deferred = e; btn.classList.remove("hide");
+  });
+  window.addEventListener("appinstalled", () => { btn.classList.add("hide"); deferred = null; toast("App instalado! ⚔️"); });
+
+  btn.addEventListener("click", async () => {
+    if (deferred) {
+      deferred.prompt();
+      try { const { outcome } = await deferred.userChoice; if (outcome === "accepted") btn.classList.add("hide"); } catch {}
+      deferred = null;
+    } else if (isIOS) {
+      showIOSInstall();
+    } else {
+      toast("No menu do navegador (⋮), toque em 'Instalar app' / 'Adicionar à tela inicial'.");
+    }
+  });
+
+  // iOS Safari não dispara beforeinstallprompt → mostra o botão com instruções
+  if (isIOS && !localStorage.getItem("bz_ios_install_dismiss")) btn.classList.remove("hide");
+}
+
+function showIOSInstall() {
+  let m = $("#iosInstall");
+  if (!m) {
+    m = el("div", "ios-install"); m.id = "iosInstall";
+    const card = el("div", "ios-install__card");
+    card.append(el("div", "ios-install__t", "📲 Instalar o Bihelz TV"));
+    const p = el("p", null, null);
+    p.append(document.createTextNode("No Safari, toque em "), el("b", null, "Compartilhar ⬆️"), document.createTextNode(" (barra de baixo) e depois em "), el("b", null, "“Adicionar à Tela de Início”"), document.createTextNode("."));
+    card.append(p);
+    const ok = el("button", "ro-btn", "Entendi"); ok.type = "button";
+    ok.addEventListener("click", () => { m.classList.remove("show"); localStorage.setItem("bz_ios_install_dismiss", "1"); const b = $("#installBtn"); if (b) b.classList.add("hide"); });
+    card.append(ok);
+    m.append(card);
+    m.addEventListener("click", (e) => { if (e.target === m) m.classList.remove("show"); });
+    document.body.append(m);
+  }
+  m.classList.add("show");
+}
+
+/* ============================================================
    BOOT
    ============================================================ */
 document.addEventListener("DOMContentLoaded", () => {
@@ -1916,4 +1970,5 @@ document.addEventListener("DOMContentLoaded", () => {
   initNostalgia();
   initTilt();
   initHeroParallax();
+  initPWA();
 });

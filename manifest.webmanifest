@@ -1,0 +1,28 @@
+{
+  "name": "Bihelz TV — Laboranok do Ragnatório",
+  "short_name": "Bihelz TV",
+  "description": "O QG da comunidade Ragnarok Online LATAM do Bihelz: lives, notícias, party finder, trade, timer de MVP, Lab do Cientista, fórum e nostalgia.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "theme_color": "#160a2b",
+  "background_color": "#12071f",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "categories": ["games", "entertainment", "social"],
+  "icons": [
+    { "src": "assets/img/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/img/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "assets/img/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Lives & vídeos", "url": "/#home", "description": "Assistir as lives e VODs do canal" },
+    { "name": "Fórum", "url": "/#blog", "description": "O fórum da comunidade" },
+    { "name": "Timer de MVP", "url": "/#mvp", "description": "Cronômetro de respawn dos MVPs" },
+    { "name": "Lab do Cientista", "url": "/#lab", "description": "Calc de Farmacologia e tabela elemental" }
+  ]
+}
