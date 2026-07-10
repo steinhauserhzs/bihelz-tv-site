@@ -318,6 +318,74 @@ function renderLiveStats(s) {
   box.classList.remove("hide");
 }
 
+/* ---------- Últimos vídeos / lives do canal (uploads playlist) ---------- */
+async function loadYouTubeVideos() {
+  const box = $("#ytVideos"), section = $("#ytSection");
+  if (!box || !ytKey()) return;
+  const CK = "bz_yt_videos";
+  let vids = null;
+  try { const c = JSON.parse(localStorage.getItem(CK) || "null"); if (c && Date.now() - c.ts < 30 * 60 * 1000) vids = c.vids; } catch {}
+  if (!vids) {
+    try {
+      let up = localStorage.getItem("bz_yt_uploads");
+      if (!up) {
+        const r = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${CANAL.youtubeChannelId}&key=${ytKey()}`);
+        const d = await r.json();
+        up = d.items && d.items[0] && d.items[0].contentDetails.relatedPlaylists.uploads;
+        if (up) localStorage.setItem("bz_yt_uploads", up);
+      }
+      if (!up) return;
+      const r2 = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${up}&maxResults=12&key=${ytKey()}`);
+      const d2 = await r2.json();
+      vids = (d2.items || []).map((it) => {
+        const sn = it.snippet, th = sn.thumbnails || {};
+        return { id: sn.resourceId && sn.resourceId.videoId, title: sn.title, date: sn.publishedAt, thumb: (th.medium || th.high || th.default || {}).url };
+      }).filter((v) => v.id && v.title !== "Private video" && v.title !== "Deleted video" && v.thumb);
+      localStorage.setItem(CK, JSON.stringify({ ts: Date.now(), vids }));
+    } catch {}
+  }
+  if (!vids || !vids.length) return;
+  const cards = vids.map((v) => {
+    const c = el("button", "vid-card"); c.type = "button";
+    const th = el("div", "vid-thumb");
+    const img = document.createElement("img"); img.src = v.thumb; img.alt = ""; img.loading = "lazy";
+    th.append(img, el("span", "vid-play", "▶"));
+    c.append(th, el("div", "vid-title", v.title), el("div", "vid-date", timeago(v.date)));
+    c.addEventListener("click", () => openVideoLightbox(v));
+    return c;
+  });
+  setContent(box, ...cards);
+  if (section) section.classList.remove("hide");
+}
+
+function openVideoLightbox(v) {
+  let lb = $("#vidLightbox");
+  if (!lb) {
+    lb = el("div", "vid-lightbox"); lb.id = "vidLightbox";
+    lb.addEventListener("click", (e) => { if (e.target === lb) closeVideoLightbox(); });
+    document.body.append(lb);
+  }
+  const inner = el("div", "vid-lb-inner");
+  const close = el("button", "vid-lb-close", "✕"); close.type = "button"; close.addEventListener("click", closeVideoLightbox);
+  const f = document.createElement("iframe");
+  f.className = "vid-lb-frame";
+  f.src = `https://www.youtube.com/embed/${v.id}?autoplay=1&rel=0`;
+  f.allow = "autoplay; encrypted-media; picture-in-picture";
+  f.allowFullscreen = true;
+  f.title = v.title;
+  inner.append(close, f, el("div", "vid-lb-title", v.title));
+  lb.replaceChildren(inner);
+  lb.classList.add("show");
+  document.body.style.overflow = "hidden";
+  if (window.BZRadio && window.BZRadio.isPlaying()) window.BZRadio.pause();
+}
+function closeVideoLightbox() {
+  const lb = $("#vidLightbox");
+  if (lb) { lb.classList.remove("show"); lb.replaceChildren(); }
+  document.body.style.overflow = "";
+}
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeVideoLightbox(); });
+
 function mountChat(forceShow) {
   const box = $("#liveChatBox"), btn = $("#toggleChat");
   const host = location.hostname;
@@ -1816,6 +1884,7 @@ document.addEventListener("DOMContentLoaded", () => {
   $("#unmuteBtn").addEventListener("click", unmuteLive);
   checkLive();
   setInterval(checkLive, 5 * 60 * 1000);
+  loadYouTubeVideos();
   initAuth();
   tickCountdown();
   setInterval(tickCountdown, 1000);
