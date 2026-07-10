@@ -19,10 +19,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;700&family=Poppins:wght@400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/ragnarok.css?v=20260709k">
-<link rel="stylesheet" href="assets/css/v2.css?v=20260709k">
+<link rel="stylesheet" href="assets/css/ragnarok.css?v=20260709l">
+<link rel="stylesheet" href="assets/css/v2.css?v=20260709l">
 </head>
 <body>
+
+<canvas id="bgfx" aria-hidden="true"></canvas>
 
 <!-- ===================== TOPO ===================== -->
 <header class="topbar">
@@ -180,19 +182,19 @@
       </a>
       <a href="#blog" class="float-3d" style="text-decoration:none">
         <div class="ro-window"><div class="ro-window__body row">
-          <div class="ro-slot">📝</div>
+          <div class="img-slot"><img src="assets/img/icon-blog.jpg" alt=""></div>
           <div style="flex:1"><h3 style="font-family:var(--f-serif)">Blog da Comunidade</h3><p class="muted" style="font-size:13px">Escreva guias e relatos pra guilda (login Google).</p></div>
         </div></div>
       </a>
       <a href="#database" class="float-3d" style="text-decoration:none">
         <div class="ro-window"><div class="ro-window__body row">
-          <div class="ro-slot">🎒</div>
+          <div class="img-slot"><img src="assets/img/icon-itens.jpg" alt=""></div>
           <div style="flex:1"><h3 style="font-family:var(--f-serif)">Itens &amp; Builds</h3><p class="muted" style="font-size:13px">Itens icônicos e pré-builds prontas das classes.</p></div>
         </div></div>
       </a>
       <a href="#nostalgia" class="float-3d" style="text-decoration:none">
         <div class="ro-window"><div class="ro-window__body row">
-          <div class="ro-slot">🕰️</div>
+          <div class="img-slot"><img src="assets/img/icon-nost.jpg" alt=""></div>
           <div style="flex:1"><h3 style="font-family:var(--f-serif)">Nostalgia</h3><p class="muted" style="font-size:13px">O RO de antigamente: BGMs, ícones e memórias.</p></div>
         </div></div>
       </a>
@@ -481,13 +483,13 @@
       </a>
       <a class="soc-card" href="https://www.instagram.com/bielz_life/" target="_blank" rel="noopener" style="text-decoration:none">
         <div class="ro-window tilt" style="width:100%"><div class="ro-window__body row">
-          <div class="ro-slot">📸</div>
+          <div class="img-slot"><img src="assets/img/icon-instagram.jpg" alt=""></div>
           <div><div class="net">Instagram</div><div class="handle">@bielz_life</div></div>
         </div></div>
       </a>
       <a class="soc-card" href="https://discord.gg/nn4MMAW9xm" target="_blank" rel="noopener" style="text-decoration:none">
         <div class="ro-window tilt" style="width:100%"><div class="ro-window__body row">
-          <div class="ro-slot">💬</div>
+          <div class="img-slot"><img src="assets/img/icon-discord.jpg" alt=""></div>
           <div><div class="net">Discord</div><div class="handle">Laboranok do Ragnatório</div></div>
         </div></div>
       </a>
@@ -553,9 +555,10 @@
 <div class="sys-toast" id="sysToast" role="status" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="assets/js/supabase-config.js?v=20260709k"></script>
-<script src="assets/js/data.js?v=20260709k"></script>
-<script src="assets/js/app.js?v=20260709k"></script>
-<script src="assets/js/radio.js?v=20260709k"></script>
+<script src="assets/js/supabase-config.js?v=20260709l"></script>
+<script src="assets/js/bg.js?v=20260709l" defer></script>
+<script src="assets/js/data.js?v=20260709l"></script>
+<script src="assets/js/app.js?v=20260709l"></script>
+<script src="assets/js/radio.js?v=20260709l"></script>
 </body>
 </html>
