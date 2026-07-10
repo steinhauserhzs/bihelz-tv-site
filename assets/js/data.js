@@ -22,7 +22,7 @@ const CANAL = {
   // live (os usuários interagem com a própria conta do YouTube). Vazia = só o
   // player + botão "abrir no YouTube". Como pegar: Google Cloud → APIs → ativar
   // "YouTube Data API v3" → Credentials → API key.
-  youtubeApiKey: "",
+  youtubeApiKey: "AIzaSyBIc-rNXudDaYMBkcI3BsPhOvnYe4uG2ag", // restrita por referrer a bihelztv.vercel.app
 };
 
 /* ---- NOTÍCIAS (atualizadas diariamente) ------------------- */
