@@ -358,6 +358,31 @@ async function loadYouTubeVideos() {
   if (section) section.classList.remove("hide");
 }
 
+/* Contagem de inscritos ao vivo no CTA de inscrição (cache 30min).
+   A chave do YouTube é restrita por referrer a bihelztv.vercel.app, então
+   em localhost isso falha de boa e o texto padrão permanece. */
+async function loadSubCount() {
+  const out = $("#subCount");
+  if (!out || !ytKey()) return;
+  const CK = "bz_yt_subs";
+  let subs = null;
+  try { const c = JSON.parse(localStorage.getItem(CK) || "null"); if (c && Date.now() - c.ts < 30 * 60 * 1000) subs = c.n; } catch {}
+  if (subs == null) {
+    try {
+      const r = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${CANAL.youtubeChannelId}&key=${ytKey()}`);
+      const d = await r.json();
+      const s = d.items && d.items[0] && d.items[0].statistics;
+      if (s && !s.hiddenSubscriberCount && s.subscriberCount != null) {
+        subs = Number(s.subscriberCount);
+        localStorage.setItem(CK, JSON.stringify({ ts: Date.now(), n: subs }));
+      }
+    } catch {}
+  }
+  if (Number.isFinite(subs)) {
+    out.textContent = `👥 ${fmtZeny(subs)} inscritos · seja o próximo!`;
+  }
+}
+
 function openVideoLightbox(v) {
   let lb = $("#vidLightbox");
   if (!lb) {
@@ -2059,6 +2084,7 @@ document.addEventListener("DOMContentLoaded", () => {
   checkLive();
   setInterval(checkLive, 5 * 60 * 1000);
   loadYouTubeVideos();
+  loadSubCount();
   initAuth();
   tickCountdown();
   setInterval(tickCountdown, 1000);
