@@ -1,13 +1,30 @@
 <!doctype html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Bihelz TV — Laboranok do Ragnatório · Comunidade Ragnarok LATAM</title>
 <meta name="description" content="O QG da comunidade Bihelz TV: notícias diárias do Ragnarok Online LATAM, lives no YouTube com chat, party finder, trade, timer de MVP, Lab do Cientista com calculadora de Farmacologia, tabela elemental e arsenal de ferramentas.">
-<meta property="og:title" content="Bihelz TV — Laboranok do Ragnatório">
-<meta property="og:description" content="Notícias diárias, lives, party finder, trade, timer de MVP e o Lab do Cientista — a comunidade Ragnarok LATAM do Bihelz.">
-<meta property="og:image" content="assets/img/logo-bihelz.png">
+<link rel="canonical" href="https://bihelztv.vercel.app/">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<meta name="author" content="Bihelz TV — Laboranok do Ragnatório">
+<meta name="keywords" content="Ragnarok Online LATAM, RO LATAM, Bihelz TV, builds Ragnarok, timer de MVP, party Ragnarok, trade Ragnarok zeny, Cientista Ragnarok, calculadora Farmacologia RO, itens Ragnarok, Laboranok do Ragnatório, MVP timer Ragnarok">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Bihelz TV — Laboranok do Ragnatório">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:url" content="https://bihelztv.vercel.app/">
+<meta property="og:title" content="Bihelz TV — Laboranok do Ragnatório · Comunidade Ragnarok LATAM">
+<meta property="og:description" content="O QG da comunidade Ragnarok Online LATAM do Bihelz: notícias diárias, lives no YouTube, party finder, trade em zeny, timer de MVP, builds e o Lab do Cientista.">
+<meta property="og:image" content="https://bihelztv.vercel.app/assets/img/og-cover.jpg?v=20260710">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Laboranok do Ragnatório — laboratório de alquimista com o mascote Poring cientista">
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bihelz TV — Laboranok do Ragnatório · Ragnarok LATAM">
+<meta name="twitter:description" content="A comunidade Ragnarok Online LATAM do Bihelz: notícias diárias, lives, party, trade, timer de MVP, builds e o Lab do Cientista.">
+<meta name="twitter:image" content="https://bihelztv.vercel.app/assets/img/og-cover.jpg?v=20260710">
 <link rel="icon" type="image/png" href="assets/img/favicon-64.png">
 <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
@@ -18,11 +35,95 @@
 <meta name="apple-mobile-web-app-title" content="Bihelz TV">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preload" as="image" href="assets/img/hero-lab.webp" type="image/webp" fetchpriority="high">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;700&family=Poppins:wght@400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/ragnarok.css?v=20260709n">
-<link rel="stylesheet" href="assets/css/v2.css?v=20260709n">
+<link rel="stylesheet" href="assets/css/ragnarok.css?v=20260709o">
+<link rel="stylesheet" href="assets/css/v2.css?v=20260709o">
+<!-- Dados estruturados (Schema.org) — entidade da marca + jogo + FAQ + MVPs -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://bihelztv.vercel.app/#org",
+      "name": "Bihelz TV",
+      "alternateName": "Laboranok do Ragnatório",
+      "url": "https://bihelztv.vercel.app/",
+      "logo": { "@type": "ImageObject", "url": "https://bihelztv.vercel.app/assets/img/logo-bihelz.png" },
+      "description": "Comunidade de Ragnarok Online LATAM do streamer Bihelz TV: lives, notícias diárias, party finder, trade, timer de MVP e o Lab do Cientista.",
+      "sameAs": [
+        "https://www.youtube.com/@bihelzs",
+        "https://www.youtube.com/channel/UCDr0kxeySD8NlVFpkI5W1Pw",
+        "https://www.instagram.com/bielz_life/",
+        "https://discord.gg/nn4MMAW9xm"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://bihelztv.vercel.app/#website",
+      "url": "https://bihelztv.vercel.app/",
+      "name": "Bihelz TV — Laboranok do Ragnatório",
+      "inLanguage": "pt-BR",
+      "publisher": { "@id": "https://bihelztv.vercel.app/#org" },
+      "about": { "@id": "https://bihelztv.vercel.app/#ragnarok" }
+    },
+    {
+      "@type": "VideoGame",
+      "@id": "https://bihelztv.vercel.app/#ragnarok",
+      "name": "Ragnarok Online",
+      "alternateName": "Ragnarok Online LATAM",
+      "gamePlatform": "PC",
+      "genre": ["MMORPG", "RPG"],
+      "publisher": { "@type": "Organization", "name": "Gravity Co., Ltd." },
+      "inLanguage": "pt-BR"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": "https://bihelztv.vercel.app/#faq",
+  "inLanguage": "pt-BR",
+  "mainEntity": [
+    { "@type": "Question", "name": "Qual é a linha de classe do Cientista no Ragnarok Online LATAM?", "acceptedAnswer": { "@type": "Answer", "text": "O caminho no LATAM é Mercador → Alquimista → Criador → Bioquímico → Cientista. O Bioquímico tem Canhão de Prótons, Planta Infernal e Farmacologia Avançada; o Cientista (classe 4) tem Atirar Ácido, cultivar plantas de batalha, Eureka e Manipular Poção." } },
+    { "@type": "Question", "name": "Quais são os requisitos das Classes 4 no Ragnarok LATAM?", "acceptedAnswer": { "@type": "Answer", "text": "É preciso estar em nível 200/70 na classe 3; o novo teto de nível passa a ser 250/50. As Classes 4 chegaram ao LATAM na atualização de aniversário." } },
+    { "@type": "Question", "name": "Que horas acontece a WoE no Ragnarok Online LATAM?", "acceptedAnswer": { "@type": "Answer", "text": "A Guerra do Emperium (WoE) no LATAM ocorre aos domingos, das 20h às 22h (horário de Brasília)." } },
+    { "@type": "Question", "name": "Como farmar zeny no Ragnarok Online sem sofrer?", "acceptedAnswer": { "@type": "Answer", "text": "Farme materiais com demanda constante (cartas, elementais, consumíveis de WoE) e venda no mercado; use o Timer de MVP para pegar a janela de respawn; e brewe poções de Farmacologia, que têm demanda alta em WoE." } },
+    { "@type": "Question", "name": "Como participar do Stars LATAM 2026 de Ragnarok?", "acceptedAnswer": { "@type": "Answer", "text": "O circuito oficial da Gravity tem classificatórias online em agosto e o Main Event em setembro; o campeão da LATAM ganha vaga na final global em Bangkok." } }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "MVPs do Ragnarok Online LATAM — respawn, mapa e elemento",
+  "itemListOrder": "https://schema.org/ItemListUnordered",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Baphomet — Labirinto da Floresta (Sombrio)", "url": "https://bihelztv.vercel.app/#mvp" },
+    { "@type": "ListItem", "position": 2, "name": "Osíris — Pirâmide Subsolo (Maldito)", "url": "https://bihelztv.vercel.app/#mvp" },
+    { "@type": "ListItem", "position": 3, "name": "Eddga — Floresta de Payon (Fogo)", "url": "https://bihelztv.vercel.app/#mvp" },
+    { "@type": "ListItem", "position": 4, "name": "Golden Thief Bug — Esgotos de Prontera (Fogo)", "url": "https://bihelztv.vercel.app/#mvp" },
+    { "@type": "ListItem", "position": 5, "name": "Doppelganger — Torre de Geffen (Sombrio)", "url": "https://bihelztv.vercel.app/#mvp" },
+    { "@type": "ListItem", "position": 6, "name": "Maya — Formigueiro Infernal (Terra)", "url": "https://bihelztv.vercel.app/#mvp" },
+    { "@type": "ListItem", "position": 7, "name": "Phreeoni — Deserto de Sograt (Neutro)", "url": "https://bihelztv.vercel.app/#mvp" },
+    { "@type": "ListItem", "position": 8, "name": "Lorde de Ossos — Torre do Relógio (Sombrio)", "url": "https://bihelztv.vercel.app/#mvp" }
+  ]
+}
+</script>
 </head>
 <body>
+
+<noscript>
+  <div style="padding:1rem;text-align:center;color:#e9dcff;font-family:sans-serif">
+    Comunidade <strong>Ragnarok Online LATAM</strong> do <strong>Bihelz TV</strong> — notícias diárias, guias de builds e Classes 4, timer de MVP, database de itens e o Lab do Cientista com calculadora de Farmacologia Avançada e tabela elemental.
+    Ative o JavaScript ou entre no nosso <a href="https://discord.gg/nn4MMAW9xm">Discord</a> e <a href="https://www.youtube.com/@bihelzs">YouTube</a>.
+  </div>
+</noscript>
 
 <canvas id="bgfx" aria-hidden="true"></canvas>
 
@@ -64,8 +165,8 @@
         <img class="mascot" src="assets/img/mascot-cientista.jpg" alt="Mascote cientista da guilda — um Poring de jaleco segurando um frasco">
         <div>
           <div class="kicker">Comunidade Bihelz TV · Ragnarok LATAM</div>
-          <h1>Laboranok do Ragnatório</h1>
-          <p>O QG oficial da guilda: notícias diárias, lives, grupo pra jogar junto, trade, timers de MVP e o Lab do Cientista — porque aqui a gente upa na base da ciência. 🧪</p>
+          <h1>Laboranok do Ragnatório <span class="h1-kw">Comunidade Ragnarok Online LATAM</span></h1>
+          <p>O QG oficial da comunidade brasileira de <strong>Ragnarok Online LATAM</strong> do Bihelz TV: notícias diárias, lives no YouTube, party finder, trade em zeny, timer de MVP, guias de builds e Classes 4, database de itens e o Lab do Cientista com calculadora de Farmacologia Avançada — porque aqui a gente upa na base da ciência. 🧪</p>
           <div class="cta">
             <a class="ro-btn ro-btn--danger" href="https://www.youtube.com/@bihelzs?sub_confirmation=1" target="_blank" rel="noopener">🔔 Inscreva-se</a>
             <a class="ro-btn ro-btn--sp" href="https://discord.gg/nn4MMAW9xm" target="_blank" rel="noopener">💬 Discord</a>
@@ -118,7 +219,7 @@
                 <div class="char-name">Bihelz TV</div>
                 <div class="char-job">Cientista Supremo do Laboranok</div>
               </div>
-              <div class="img-slot" aria-hidden="true"><img src="assets/img/icon-lab.jpg" alt=""></div>
+              <div class="img-slot" aria-hidden="true"><img src="assets/img/icon-lab.jpg" alt="" loading="lazy" decoding="async"></div>
             </div>
             <div class="line"><b>HP</b><div class="ro-bar"><div class="ro-bar__fill" style="width:100%"></div><span class="ro-bar__label">9999 / 9999</span></div></div>
             <div class="line"><b>SP</b><div class="ro-bar ro-bar--sp"><div class="ro-bar__fill" style="width:92%"></div><span class="ro-bar__label">690 / 750</span></div></div>
@@ -156,61 +257,61 @@
     <div class="grid grid--3" id="homeTools">
       <a href="#party" class="float-3d" style="text-decoration:none">
         <div class="ro-window"><div class="ro-window__body row">
-          <div class="img-slot"><img src="assets/img/icon-party.jpg" alt=""></div>
+          <div class="img-slot"><img src="assets/img/icon-party.jpg" alt="" loading="lazy" decoding="async"></div>
           <div style="flex:1"><h3 style="font-family:var(--f-serif)">Jogar Junto</h3><p class="muted" style="font-size:13px">Encontre grupo pra upar, caçar MVP ou fechar instância.</p></div>
         </div></div>
       </a>
       <a href="#mercado" class="float-3d" style="text-decoration:none">
         <div class="ro-window"><div class="ro-window__body row">
-          <div class="img-slot"><img src="assets/img/icon-trade.jpg" alt=""></div>
+          <div class="img-slot"><img src="assets/img/icon-trade.jpg" alt="" loading="lazy" decoding="async"></div>
           <div style="flex:1"><h3 style="font-family:var(--f-serif)">Quadro de Trade</h3><p class="muted" style="font-size:13px">Anuncie o que você vende ou procura, em zeny.</p></div>
         </div></div>
       </a>
       <a href="#mvp" class="float-3d" style="text-decoration:none">
         <div class="ro-window"><div class="ro-window__body row">
-          <div class="img-slot"><img src="assets/img/icon-mvp.jpg" alt=""></div>
+          <div class="img-slot"><img src="assets/img/icon-mvp.jpg" alt="" loading="lazy" decoding="async"></div>
           <div style="flex:1"><h3 style="font-family:var(--f-serif)">Timer de MVP</h3><p class="muted" style="font-size:13px">Registre a morte e chegue na janela de respawn.</p></div>
         </div></div>
       </a>
       <a href="#lab" class="float-3d" style="text-decoration:none">
         <div class="ro-window"><div class="ro-window__body row">
-          <div class="img-slot"><img src="assets/img/icon-lab.jpg" alt=""></div>
+          <div class="img-slot"><img src="assets/img/icon-lab.jpg" alt="" loading="lazy" decoding="async"></div>
           <div style="flex:1"><h3 style="font-family:var(--f-serif)">Lab do Cientista</h3><p class="muted" style="font-size:13px">Farmacologia Especial, homúnculos e tabela elemental.</p></div>
         </div></div>
       </a>
       <a href="#guias" class="float-3d" style="text-decoration:none">
         <div class="ro-window"><div class="ro-window__body row">
-          <div class="img-slot"><img src="assets/img/icon-guias.jpg" alt=""></div>
+          <div class="img-slot"><img src="assets/img/icon-guias.jpg" alt="" loading="lazy" decoding="async"></div>
           <div style="flex:1"><h3 style="font-family:var(--f-serif)">Guias</h3><p class="muted" style="font-size:13px">Classes 4, leveling, zeny, WoE e o competitivo.</p></div>
         </div></div>
       </a>
       <a href="#buscar" class="float-3d" style="text-decoration:none">
         <div class="ro-window"><div class="ro-window__body row">
-          <div class="img-slot"><img src="assets/img/icon-live.jpg" alt=""></div>
+          <div class="img-slot"><img src="assets/img/icon-live.jpg" alt="" loading="lazy" decoding="async"></div>
           <div style="flex:1"><h3 style="font-family:var(--f-serif)">Central do Aventureiro</h3><p class="muted" style="font-size:13px">Busque char, guilda, item ou carta nos melhores databases.</p></div>
         </div></div>
       </a>
       <a href="#blog" class="float-3d" style="text-decoration:none">
         <div class="ro-window"><div class="ro-window__body row">
-          <div class="img-slot"><img src="assets/img/icon-blog.jpg" alt=""></div>
+          <div class="img-slot"><img src="assets/img/icon-blog.jpg" alt="" loading="lazy" decoding="async"></div>
           <div style="flex:1"><h3 style="font-family:var(--f-serif)">Blog da Comunidade</h3><p class="muted" style="font-size:13px">Escreva guias e relatos pra guilda (login Google).</p></div>
         </div></div>
       </a>
       <a href="#database" class="float-3d" style="text-decoration:none">
         <div class="ro-window"><div class="ro-window__body row">
-          <div class="img-slot"><img src="assets/img/icon-itens.jpg" alt=""></div>
+          <div class="img-slot"><img src="assets/img/icon-itens.jpg" alt="" loading="lazy" decoding="async"></div>
           <div style="flex:1"><h3 style="font-family:var(--f-serif)">Itens &amp; Builds</h3><p class="muted" style="font-size:13px">Itens icônicos e pré-builds prontas das classes.</p></div>
         </div></div>
       </a>
       <a href="#nostalgia" class="float-3d" style="text-decoration:none">
         <div class="ro-window"><div class="ro-window__body row">
-          <div class="img-slot"><img src="assets/img/icon-nost.jpg" alt=""></div>
+          <div class="img-slot"><img src="assets/img/icon-nost.jpg" alt="" loading="lazy" decoding="async"></div>
           <div style="flex:1"><h3 style="font-family:var(--f-serif)">Nostalgia</h3><p class="muted" style="font-size:13px">O RO de antigamente: BGMs, ícones e memórias.</p></div>
         </div></div>
       </a>
       <a href="#comunidade" class="float-3d" style="text-decoration:none">
         <div class="ro-window"><div class="ro-window__body row">
-          <div class="img-slot"><img src="assets/img/icon-guilda.jpg" alt=""></div>
+          <div class="img-slot"><img src="assets/img/icon-guilda.jpg" alt="" loading="lazy" decoding="async"></div>
           <div style="flex:1"><h3 style="font-family:var(--f-serif)">A Guilda</h3><p class="muted" style="font-size:13px">Redes, programação das lives e regras do Laboranok.</p></div>
         </div></div>
       </a>
@@ -487,19 +588,19 @@
     <div class="grid grid--2">
       <a class="soc-card" href="https://www.youtube.com/@bihelzs" target="_blank" rel="noopener" style="text-decoration:none">
         <div class="ro-window tilt" style="width:100%"><div class="ro-window__body row">
-          <div class="img-slot"><img src="assets/img/icon-live.jpg" alt=""></div>
+          <div class="img-slot"><img src="assets/img/icon-live.jpg" alt="" loading="lazy" decoding="async"></div>
           <div><div class="net">YouTube — é aqui que rola live!</div><div class="handle">@bihelzs</div></div>
         </div></div>
       </a>
       <a class="soc-card" href="https://www.instagram.com/bielz_life/" target="_blank" rel="noopener" style="text-decoration:none">
         <div class="ro-window tilt" style="width:100%"><div class="ro-window__body row">
-          <div class="img-slot"><img src="assets/img/icon-instagram.jpg" alt=""></div>
+          <div class="img-slot"><img src="assets/img/icon-instagram.jpg" alt="" loading="lazy" decoding="async"></div>
           <div><div class="net">Instagram</div><div class="handle">@bielz_life</div></div>
         </div></div>
       </a>
       <a class="soc-card" href="https://discord.gg/nn4MMAW9xm" target="_blank" rel="noopener" style="text-decoration:none">
         <div class="ro-window tilt" style="width:100%"><div class="ro-window__body row">
-          <div class="img-slot"><img src="assets/img/icon-discord.jpg" alt=""></div>
+          <div class="img-slot"><img src="assets/img/icon-discord.jpg" alt="" loading="lazy" decoding="async"></div>
           <div><div class="net">Discord</div><div class="handle">Laboranok do Ragnatório</div></div>
         </div></div>
       </a>
@@ -542,7 +643,7 @@
   <footer class="footer">
     <!-- Selo do Reino — contador de visitas global (preenchido por initViewCounter) -->
     <div class="viewcount hide" id="viewCounter" role="img" aria-label="Contador de visitas do reino">
-      <span class="viewcount__emblem img-slot" aria-hidden="true"><img src="assets/img/emblem-48.png?v=20260709n" alt="" width="24" height="24"></span>
+      <span class="viewcount__emblem img-slot" aria-hidden="true"><img src="assets/img/emblem-48.png?v=20260709o" alt="" width="24" height="24"></span>
       <span class="viewcount__label">Aventureiros que já cruzaram este portal</span>
       <span class="viewcount__num" id="viewCounterNum" aria-hidden="true"></span>
       <span class="viewcount__suffix" aria-hidden="true">e contando…</span>
@@ -556,13 +657,13 @@
 <!-- Hotbar mobile (F1–F8, como a barra de atalhos do jogo) -->
 <nav class="hotbar" aria-label="Navegação móvel">
   <a href="#home" data-nav><span class="fkey">F1</span><span class="slot"><img src="assets/img/mascot-cientista.jpg" alt=""></span><span class="lbl">Início</span></a>
-  <a href="#noticias" data-nav><span class="fkey">F2</span><span class="slot"><img src="assets/img/icon-noticias.jpg" alt=""></span><span class="lbl">News</span></a>
-  <a href="#party" data-nav><span class="fkey">F3</span><span class="slot"><img src="assets/img/icon-party.jpg" alt=""></span><span class="lbl">Party</span></a>
-  <a href="#mercado" data-nav><span class="fkey">F4</span><span class="slot"><img src="assets/img/icon-trade.jpg" alt=""></span><span class="lbl">Trade</span></a>
-  <a href="#mvp" data-nav><span class="fkey">F5</span><span class="slot"><img src="assets/img/icon-mvp.jpg" alt=""></span><span class="lbl">MVP</span></a>
-  <a href="#lab" data-nav><span class="fkey">F6</span><span class="slot"><img src="assets/img/icon-lab.jpg" alt=""></span><span class="lbl">Lab</span></a>
-  <a href="#guias" data-nav><span class="fkey">F7</span><span class="slot"><img src="assets/img/icon-guias.jpg" alt=""></span><span class="lbl">Guias</span></a>
-  <a href="#comunidade" data-nav><span class="fkey">F8</span><span class="slot"><img src="assets/img/icon-guilda.jpg" alt=""></span><span class="lbl">Guilda</span></a>
+  <a href="#noticias" data-nav><span class="fkey">F2</span><span class="slot"><img src="assets/img/icon-noticias.jpg" alt="" loading="lazy" decoding="async"></span><span class="lbl">News</span></a>
+  <a href="#party" data-nav><span class="fkey">F3</span><span class="slot"><img src="assets/img/icon-party.jpg" alt="" loading="lazy" decoding="async"></span><span class="lbl">Party</span></a>
+  <a href="#mercado" data-nav><span class="fkey">F4</span><span class="slot"><img src="assets/img/icon-trade.jpg" alt="" loading="lazy" decoding="async"></span><span class="lbl">Trade</span></a>
+  <a href="#mvp" data-nav><span class="fkey">F5</span><span class="slot"><img src="assets/img/icon-mvp.jpg" alt="" loading="lazy" decoding="async"></span><span class="lbl">MVP</span></a>
+  <a href="#lab" data-nav><span class="fkey">F6</span><span class="slot"><img src="assets/img/icon-lab.jpg" alt="" loading="lazy" decoding="async"></span><span class="lbl">Lab</span></a>
+  <a href="#guias" data-nav><span class="fkey">F7</span><span class="slot"><img src="assets/img/icon-guias.jpg" alt="" loading="lazy" decoding="async"></span><span class="lbl">Guias</span></a>
+  <a href="#comunidade" data-nav><span class="fkey">F8</span><span class="slot"><img src="assets/img/icon-guilda.jpg" alt="" loading="lazy" decoding="async"></span><span class="lbl">Guilda</span></a>
 </nav>
 
 <button id="installBtn" class="install-fab hide" type="button" aria-label="Instalar aplicativo">
@@ -571,11 +672,11 @@
 
 <div class="sys-toast" id="sysToast" role="status" aria-live="polite"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="assets/js/supabase-config.js?v=20260709n"></script>
-<script src="assets/js/bg.js?v=20260709n" defer></script>
-<script src="assets/js/data.js?v=20260709n"></script>
-<script src="assets/js/app.js?v=20260709n"></script>
-<script src="assets/js/radio.js?v=20260709n"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
+<script src="assets/js/supabase-config.js?v=20260709o" defer></script>
+<script src="assets/js/bg.js?v=20260709o" defer></script>
+<script src="assets/js/data.js?v=20260709o" defer></script>
+<script src="assets/js/app.js?v=20260709o" defer></script>
+<script src="assets/js/radio.js?v=20260709o" defer></script>
 </body>
 </html>

@@ -15,7 +15,8 @@
 }
 .hero-banner__bg{
   position:absolute;inset:-6%;z-index:-2;
-  background:url("../img/hero-lab.jpg") center/cover no-repeat;
+  background:image-set(url("../img/hero-lab.webp") type("image/webp"), url("../img/hero-lab.jpg") type("image/jpeg")) center/cover no-repeat;
+  background:-webkit-image-set(url("../img/hero-lab.webp") type("image/webp"), url("../img/hero-lab.jpg") type("image/jpeg")) center/cover no-repeat;
   transform:translate3d(var(--px,0),var(--py,0),0) scale(1.06);
   transition:transform .25s ease-out;
   will-change:transform;
@@ -657,3 +658,10 @@ body::before{display:none!important} /* substitui as estrelas CSS pelo canvas an
   .sub-cta__btn{width:100%;text-align:center}
 }
 @media (prefers-reduced-motion:reduce){ .sub-cta__bell{animation:none} }
+
+/* keyword no H1 (SEO) — subtítulo discreto sob o nome de fantasia */
+.h1-kw{
+  display:block;margin-top:4px;
+  font-family:var(--f-hud, sans-serif);font-size:.34em;font-weight:600;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--bz-gold,#ffc24b);opacity:.9;
+}

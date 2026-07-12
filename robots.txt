@@ -1,0 +1,12 @@
+# Bihelz TV — Laboranok do Ragnatório
+# Comunidade Ragnarok Online LATAM
+User-agent: *
+Allow: /
+
+# Bots de IA/busca modernos bem-vindos (visibilidade máxima)
+User-agent: Googlebot
+Allow: /
+User-agent: Bingbot
+Allow: /
+
+Sitemap: https://bihelztv.vercel.app/sitemap.xml

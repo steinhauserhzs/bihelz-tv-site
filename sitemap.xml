@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://bihelztv.vercel.app/</loc>
+    <lastmod>2026-07-10</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://bihelztv.vercel.app/assets/img/og-cover.jpg</image:loc>
+      <image:title>Laboranok do Ragnatório — Comunidade Ragnarok Online LATAM do Bihelz TV</image:title>
+    </image:image>
+  </url>
+</urlset>
